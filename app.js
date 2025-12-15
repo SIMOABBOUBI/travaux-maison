@@ -1,6 +1,5 @@
 // =========================================================
 // 🔥 Configuration et Initialisation Firebase
-// (Vos paramètres réels)
 // =========================================================
 const firebaseConfig = {
   apiKey: "AIzaSyDtGiCjOy33ZI03QAe_ELIHfg9H05tVtK4",
@@ -20,6 +19,14 @@ const expensesRef = db.collection("expenses");
 // 🧩 DOM Cache & Utilitaires
 // =========================================================
 
+// --- NOUVEAU: Budget Cible (Personnalisable) ---
+const BUDGET_CIBLE = {
+    "Outillage": 5000,
+    "Prestations": 20000,
+    "Grosses dépenses": 15000,
+    "Total": 40000
+};
+
 // Cache des éléments du formulaire
 const expenseForm = document.getElementById("expense-form");
 const dateInput = document.getElementById("date");
@@ -30,10 +37,8 @@ const recipientInput = document.getElementById("recipient");
 const amountInput = document.getElementById("amount");
 const statusInput = document.getElementById("status");
 const dueDateInput = document.getElementById("dueDate");
-// NOUVEAU
 const paidByInput = document.getElementById("paidBy");
 const reimbursementStatusInput = document.getElementById("reimbursementStatus");
-
 const addButton = document.getElementById("add-expense-btn");
 
 // Cache des totaux et du conteneur des cartes
@@ -44,6 +49,14 @@ const totalPaid = document.getElementById("total-paid");
 const totalPending = document.getElementById("total-pending");
 const cardsContainer = document.getElementById("cards-container");
 const toastContainer = document.getElementById("toast-container");
+
+// --- NOUVEAU: Éléments DOM pour le Budget ---
+const outillageBudget = document.getElementById("outillage-budget");
+const prestationsBudget = document.getElementById("prestations-budget");
+const grossesBudget = document.getElementById("grosses-budget");
+const totalBudget = document.getElementById("total-budget");
+const progressTracker = document.getElementById("progress-tracker");
+const overallProgress = document.getElementById("overall-progress");
 
 // --- UTILS ---
 
@@ -56,7 +69,8 @@ const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', {
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
-        return new Date(dateString).toLocaleDateString('fr-FR', {
+        // Utiliser la date du jour pour éviter le décalage horaire lors de la création de l'objet Date
+        return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
@@ -90,7 +104,6 @@ expenseForm.addEventListener('submit', async (e) => {
 
     const amountValue = Number(amountInput.value);
 
-    // Validation rapide
     if (!dateInput.value || !categoryInput.value || !descriptionInput.value || !amountInput.value || !recipientInput.value) {
         return showToast("Veuillez remplir tous les champs obligatoires !", 'error');
     }
@@ -110,7 +123,7 @@ expenseForm.addEventListener('submit', async (e) => {
             recipient: recipientInput.value,
             amount: amountValue,
 
-            // NOUVEAU: Champs Remboursement
+            // Champs Remboursement
             paidBy: paidByInput.value,
             reimbursementStatus: reimbursementStatusInput.value,
 
@@ -132,7 +145,7 @@ expenseForm.addEventListener('submit', async (e) => {
 });
 
 // =========================================================
-// 🔄 Temps Réel (Affichage des Données)
+// 🔄 Temps Réel & SUIVI BUDGÉTAIRE
 // =========================================================
 
 expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
@@ -147,7 +160,7 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         const docId = doc.id;
         const amount = e.amount;
 
-        // CORRECTION DE L'ERREUR 'undefined' ICI pour les anciens documents
+        // CORRECTION DE L'ERREUR 'undefined'
         const expenseStatus = e.status || "Inconnu";
         const paidBy = e.paidBy || "Moi";
         const reimbursementStatus = e.reimbursementStatus || "N/A";
@@ -160,7 +173,7 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         isPaid ? (totalPaidAmount += amount) : (totalPendingAmount += amount);
 
         const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
-        const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-'); // NOUVEAU
+        const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-');
 
         // --- Rendu de la carte avec Template Literals ---
         const cardHTML = `
@@ -198,12 +211,39 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
     });
 
-    // Mise à jour des totaux dans le dashboard
+    // NOUVEAU: Logique de Suivi Budgétaire
+    const totalSpent = totalPaidAmount + totalPendingAmount;
+    const totalBudgetAmount = BUDGET_CIBLE.Total;
+
+    // Calcul de l'Avancement
+    const progressPercentage = (totalSpent / totalBudgetAmount) * 100;
+    const clampedProgress = Math.min(100, Math.round(progressPercentage));
+    const progressText = progressPercentage > 100 ? `Dépassement de ${formatCurrency(totalSpent - totalBudgetAmount)}` : `${clampedProgress}% Atteint`;
+
+    // Mise à jour des Totaux et du Budget
     outillageTotal.textContent = formatCurrency(totals.Outillage);
     prestationsTotal.textContent = formatCurrency(totals.Prestations);
     grossesTotal.textContent = formatCurrency(totals["Grosses dépenses"]);
     totalPaid.textContent = formatCurrency(totalPaidAmount);
     totalPending.textContent = formatCurrency(totalPendingAmount);
+
+    // Affichage des Budgets Cibles
+    outillageBudget.textContent = formatCurrency(BUDGET_CIBLE.Outillage);
+    prestationsBudget.textContent = formatCurrency(BUDGET_CIBLE.Prestations);
+    grossesBudget.textContent = formatCurrency(BUDGET_CIBLE["Grosses dépenses"]);
+    totalBudget.textContent = formatCurrency(totalBudgetAmount);
+
+    // Mise à jour de la barre de progression
+    overallProgress.style.width = `${clampedProgress}%`;
+    progressTracker.querySelector('p').textContent = progressText;
+    progressTracker.querySelector('span').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
+
+    // Classe d'alerte si le budget est dépassé
+    if (progressPercentage > 100) {
+        overallProgress.classList.add('budget-alert');
+    } else {
+        overallProgress.classList.remove('budget-alert');
+    }
 });
 
 // =========================================================
@@ -233,7 +273,7 @@ window.updateStatusExpense = async (id, newStatus) => {
     }
 }
 
-// NOUVEAU : Marquer comme Remboursé (rendu global)
+// Marquer comme Remboursé (rendu global)
 window.markReimbursed = async (id) => {
     if (!confirm("Confirmer le remboursement de cette dépense ?")) return;
     try {

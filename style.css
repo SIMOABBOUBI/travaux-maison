@@ -72,13 +72,28 @@ body {
     color: #333;
 }
 
-/* Couleurs spécifiques pour les totaux importants */
-.stat-card[data-type="Outillage"] { border-left: 5px solid #4CAF50; } /* Vert */
-.stat-card[data-type="Prestations"] { border-left: 5px solid #FF9800; } /* Orange */
-.stat-card[data-type="Grosses dépenses"] { border-left: 5px solid #9C27B0; } /* Violet */
-
 .total-paid strong { color: #28a745; }
 .total-pending strong { color: #dc3545; }
+
+/* NOUVEAU: Styles pour le Budget */
+.stat-card.category-card {
+    border-top: 5px solid #1a73e8;
+    border-left: none;
+}
+
+.budget-target {
+    margin-top: 10px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #666;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 5px;
+}
+
+.budget-target span {
+    font-weight: 700;
+    color: #1a73e8;
+}
 
 
 /* --- Section Formulaire --- */
@@ -102,9 +117,8 @@ body {
 }
 
 .modern-form {
-    display: grid;
-    /* 4 colonnes pour les grands écrans */
     grid-template-columns: repeat(4, 1fr);
+    display: grid;
     gap: 20px;
 }
 
@@ -136,7 +150,6 @@ body {
 }
 
 .submit-btn {
-    /* Prend toute la largeur, commence à la 1ère colonne */
     grid-column: 1 / -1;
     padding: 15px;
     background: #1a73e8;
@@ -156,6 +169,70 @@ body {
     cursor: not-allowed;
 }
 
+
+/* --- Section de Suivi de Projet (Progression) --- */
+.project-tracker {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.tracker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.tracker-header h2 {
+    font-size: 1.5rem;
+    color: #1a73e8;
+    margin: 0;
+}
+.tracker-header p {
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+}
+
+.progress-bar-container {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+}
+
+.progress-bar-container p, .progress-bar-container span {
+    display: block;
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.progress-bar-container span {
+    font-weight: 400;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.progress-bar-bg {
+    background: #e0e0e0;
+    border-radius: 5px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.5s ease-in-out;
+}
+
+.progress-bar.budget-alert {
+    background: linear-gradient(90deg, #FF5722, #F44336);
+}
+
+
 /* --- Section Liste des Dépenses --- */
 .list-section h2 {
     font-size: 1.6rem;
@@ -166,7 +243,6 @@ body {
 
 .expense-grid {
     display: grid;
-    /* Colonnes adaptatives */
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
 }
@@ -216,9 +292,9 @@ body {
 
 .card-footer {
     display: flex;
-    justify-content: flex-start; /* Changement pour aligner les badges */
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 8px; /* Espace entre les badges */
+    gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #f0f0f0;
@@ -232,7 +308,7 @@ body {
     font-weight: 600;
     color: white;
     text-transform: uppercase;
-    white-space: nowrap; /* Empêche les sauts de ligne */
+    white-space: nowrap;
 }
 .status-acompte { background: #ff9800; }
 .status-total { background: #17a2b8; }
@@ -240,7 +316,7 @@ body {
 .status-en-attente { background: #6c757d; }
 .status-inconnu { background: #777; opacity: 0.7; }
 
-/* NOUVEAU: Styles pour le statut de Remboursement */
+/* Styles pour le statut de Remboursement */
 .status-badge.status-a-rembourser {
     background: #ffc107;
     color: #333;
@@ -257,7 +333,7 @@ body {
 .due-date {
     font-size: 0.8em;
     color: #777;
-    margin-left: auto; /* Pousse l'échéance à droite */
+    margin-left: auto;
 }
 
 /* États spécifiques des cartes */
@@ -296,7 +372,6 @@ body {
 .postpone-btn:hover { background: #e0a800; }
 .delete-btn { background: #dc3545; color: white; }
 .delete-btn:hover { background: #c82333; }
-/* NOUVEAU: Bouton Rembourser */
 .reimburse-btn {
     background: #4CAF50;
     color: white;
@@ -345,9 +420,8 @@ body {
 
 /* --- Réactivité (Mobile-First) --- */
 @media(max-width: 992px) {
-    .modern-form { 
-        /* 2 colonnes en tablette */
-        grid-template-columns: repeat(2, 1fr); 
+    .modern-form {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -355,8 +429,7 @@ body {
     .container {
         padding: 10px;
     }
-    .modern-form { 
-        /* 1 colonne en mobile */
+    .modern-form {
         grid-template-columns: 1fr; 
     }
     .dashboard-totals {

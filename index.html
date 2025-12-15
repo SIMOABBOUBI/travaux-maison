@@ -14,30 +14,50 @@
 
 <header class="app-header">
     <i class="fas fa-home"></i>
-    <h1>Suivi Financier **Travaux Maison**</h1>
+    <h1>Suivi Financier : Travaux Maison Musson</h1>
 </header>
 
 <main class="container">
 
+    <section class="project-tracker">
+        <div class="tracker-header">
+            <h2>📊 Avancement Global du Budget</h2>
+            <p>Objectif de Fin : 01/03/2026</p>
+        </div>
+
+        <div id="progress-tracker" class="progress-bar-container">
+            <p>0% Atteint</p>
+            <span>Total Dépensé: 0 €</span>
+            <div class="progress-bar-bg">
+                <div id="overall-progress" class="progress-bar" style="width: 0;"></div>
+            </div>
+        </div>
+    </section>
+
     <section class="dashboard-totals">
-        <div class="stat-card" data-type="Outillage">
-            <p>Outillage</p>
+        <div class="stat-card category-card" data-type="Outillage">
+            <p>Outillage - Dépensé</p>
             <strong id="outillage">0 €</strong>
+            <p class="budget-target">Budget Cible : <span id="outillage-budget">0 €</span></p>
         </div>
-        <div class="stat-card" data-type="Prestations">
-            <p>Prestations</p>
+        <div class="stat-card category-card" data-type="Prestations">
+            <p>Prestations - Dépensé</p>
             <strong id="prestations">0 €</strong>
+            <p class="budget-target">Budget Cible : <span id="prestations-budget">0 €</span></p>
         </div>
-        <div class="stat-card" data-type="Grosses dépenses">
-            <p>Grosses dépenses</p>
+        <div class="stat-card category-card" data-type="Grosses dépenses">
+            <p>Grosses dépenses - Dépensé</p>
             <strong id="grosses">0 €</strong>
+            <p class="budget-target">Budget Cible : <span id="grosses-budget">0 €</span></p>
         </div>
-        <div class="stat-card total-paid">
+
+        <div class="stat-card total-summary total-paid">
             <p>Total Déjà Payé</p>
             <strong id="total-paid">0 €</strong>
+            <p class="budget-target">Budget Global : <span id="total-budget">0 €</span></p>
         </div>
-        <div class="stat-card total-pending">
-            <p>Reste à Payer</p>
+        <div class="stat-card total-summary total-pending">
+            <p>Reste à Payer (Fournisseur)</p>
             <strong id="total-pending">0 €</strong>
         </div>
     </section>
@@ -67,9 +87,12 @@
                 <div class="form-group">
                     <label for="paidBy">Payé par</label>
                     <select id="paidBy" name="paidBy" required>
-                        <option value="Kimberly" selected>Kimberly</option>
+                        <option value="Kimberley" selected>Kimberley</option>
+                        <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
-                        <option value="Martine">Martine</option>
+                        <option value="Maman">Maman</option>
+                        <option value="Quertain">Quertain</option>
+                        <option value="Gabi">Gabi</option>
                         <option value="Autre">Autre</option>
                     </select>
                 </div>
@@ -77,12 +100,11 @@
                 <div class="form-group">
                     <label for="reimbursementStatus">Remboursement</label>
                     <select id="reimbursementStatus" name="reimbursementStatus">
-                        <option value="N/A" selected>N/A (Payé par moi)</option>
+                        <option value="N/A" selected>N/A (Payé par moi-Kimberley)</option>
                         <option value="A rembourser">A Rembourser</option>
                         <option value="Remboursé">Remboursé</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="status">Statut (Fournisseur)</label>
                     <select id="status" name="status" required>
