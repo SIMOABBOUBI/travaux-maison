@@ -517,7 +517,7 @@ body {
     color: #007bff; /* Bleu pour le coût estimé */
 }
 
-/* NOUVEAU: Style pour l'indicateur d'avancement */
+/* Indicateur d'avancement */
 .task-progress-indicator {
     font-size: 0.8em;
     font-weight: 700;
@@ -537,6 +537,17 @@ body {
     background: #fae0e2;
 }
 
+/* NOUVEAU: Style du bouton de modification d'avancement */
+.action-btn.update-progress-btn {
+    background: #17a2b8; /* Couleur Cyan/Bleu secondaire */
+    color: white;
+    padding: 5px 8px;
+    font-size: 1.0em;
+}
+.action-btn.update-progress-btn:hover {
+    background: #138496;
+}
+
 /* États des tâches */
 .task-card.task-completed {
     background: #e9f5e9;
@@ -553,7 +564,7 @@ body {
     background: #fffafa;
 }
 
-/* NOUVEAU: Style pour le statut "Bloquée" */
+/* Style pour le statut "Bloquée" */
 .task-card.task-priority-bloquée {
     border-left: 4px solid #6c757d; /* Gris pour bloqué */
     opacity: 0.9;
@@ -565,17 +576,14 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Adaptation de la grille du formulaire de tâche pour tablette/petit écran */
     .task-form-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Tous les groupes de formulaire s'étendent sur 1 colonne par défaut, sauf... */
     .task-form-grid .form-group {
         grid-column: span 1;
     }
 
-    /* ... le bouton prend toute la largeur */
     .task-form-grid .task-btn {
         grid-column: 1 / -1;
     }
@@ -598,7 +606,6 @@ body {
         flex-direction: column;
     }
 
-    /* Adapter la grille des tâches pour mobile (une colonne) */
     .task-form-grid {
         grid-template-columns: 1fr;
     }
@@ -607,7 +614,6 @@ body {
         grid-column: 1 / -1;
     }
 
-    /* Adapter la carte de tâche pour mobile */
     .task-card {
         flex-direction: column;
         align-items: flex-start;
@@ -627,7 +633,6 @@ body {
         margin-left: 0;
     }
     .task-due-date, .task-cost, .task-priority-badge, .task-progress-indicator {
-        /* Permet à ces éléments de se répartir sur une ou deux lignes pour éviter les débordements */
         flex-basis: auto;
     }
 }

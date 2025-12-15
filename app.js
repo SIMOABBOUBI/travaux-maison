@@ -48,9 +48,9 @@ const totalBudget = document.getElementById("total-budget");
 const progressTracker = document.getElementById("progress-tracker");
 const overallProgress = document.getElementById("overall-progress");
 
-// --- Cache des éléments du formulaire de DÉPENSE ---
+// --- Cache des éléments du formulaire de DÉPENSE (CORRIGÉ) ---
 const expenseForm = document.getElementById("expense-form");
-const dateInput = document.getElementById("date"); // <-- SOLUTION À L'ERREUR dateInput not defined
+const dateInput = document.getElementById("date");
 const typeInput = document.getElementById("type");
 const categoryInput = document.getElementById("category");
 const descriptionInput = document.getElementById("description");
@@ -73,7 +73,7 @@ const tasksContainer = document.getElementById("tasks-container");
 const overallTaskProgressText = document.getElementById("overall-task-progress");
 const taskProgressBar = document.getElementById("task-progress-bar");
 
-// NOUVEAU: Cache des éléments DOM pour les Tâches améliorées
+// Cache des éléments DOM pour les Tâches améliorées
 const taskLocationInput = document.getElementById("task-location");
 const taskPriorityInput = document.getElementById("task-priority");
 const taskEstimatedCostInput = document.getElementById("task-estimatedCost");
@@ -92,7 +92,6 @@ const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', {
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
-        // Ajout de 'T00:00:00' pour éviter les problèmes de fuseau horaire
         return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
@@ -118,7 +117,7 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
-// Initialisation : Prépare la date du jour (S'assure que dateInput est défini)
+// Initialisation : Prépare la date du jour (CORRIGÉ)
 document.addEventListener('DOMContentLoaded', () => {
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
@@ -358,7 +357,6 @@ taskForm.addEventListener('submit', async (e) => {
             taskDueDate: taskDueDateInput.value || '',
             estimatedCost: estimatedCostValue,
 
-            // NOUVEAU: Avancement et Lien
             progress: progressValue,
             materialsLink: taskMaterialsLinkInput.value || '',
 
@@ -395,7 +393,6 @@ tasksRef.orderBy("createdAt", "asc").onSnapshot(snapshot => {
         const docId = doc.id;
 
         totalTasks++;
-        // Le nombre de tâches complétées est basé sur le champ 'completed'
         if (t.completed) {
             completedTasks++;
         }
@@ -454,6 +451,11 @@ tasksRef.orderBy("createdAt", "asc").onSnapshot(snapshot => {
                         : ''}
 
                     <span class="task-due-date">Échéance: ${formatDate(t.taskDueDate)}</span>
+
+                    <button class="action-btn update-progress-btn" onclick="promptUpdateTaskProgress('${docId}', ${taskProgress})" title="Modifier l'avancement">
+                        <i class="fas fa-edit"></i>
+                    </button>
+
                     <button class="action-btn delete-task-btn" onclick="deleteTask('${docId}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
@@ -476,6 +478,48 @@ function updateTaskProgress(totalTasks, completedTasks) {
     taskProgressBar.style.width = `${percentage}%`;
 }
 
+// =========================================================
+// ✏️ Mise à Jour de l'Avancement de Tâche
+// =========================================================
+
+window.promptUpdateTaskProgress = async (id, currentProgress) => {
+    // Demande à l'utilisateur un nouveau pourcentage
+    const newProgressStr = prompt(
+        `Modifier l'avancement de la tâche (valeur actuelle: ${currentProgress}%) ?\n\nVeuillez entrer un pourcentage entre 0 et 100 :`,
+        currentProgress
+    );
+
+    if (newProgressStr === null) return; // L'utilisateur a annulé
+
+    const newProgress = parseInt(newProgressStr);
+
+    if (isNaN(newProgress) || newProgress < 0 || newProgress > 100) {
+        return showToast("Pourcentage invalide. Veuillez entrer un nombre entier entre 0 et 100.", 'error');
+    }
+
+    // Détermine le statut "completed" en fonction du nouveau pourcentage
+    const newCompletedStatus = newProgress === 100;
+
+    const updateData = {
+        progress: newProgress,
+        completed: newCompletedStatus,
+    };
+
+    // Gère l'horodatage de complétion si la tâche est terminée/réouverte
+    if (newCompletedStatus) {
+        updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+    } else if (newProgress < 100) {
+        updateData.completedAt = firebase.firestore.FieldValue.delete();
+    }
+
+    try {
+        await tasksRef.doc(id).update(updateData);
+        showToast(`Avancement mis à jour à ${newProgress}% !`, 'success');
+    } catch (error) {
+        showToast("Erreur lors de la mise à jour de l'avancement.", 'error');
+        console.error("Erreur de mise à jour de tâche : ", error);
+    }
+};
 
 // Basculer le statut Complété/Incomplet (rendu global)
 window.toggleTaskStatus = async (id, currentCompletedStatus) => {
