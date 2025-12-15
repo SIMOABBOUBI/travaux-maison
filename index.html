@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome pour icônes -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Style -->
     <link rel="stylesheet" href="style.css">
     <!-- Firebase -->
@@ -17,7 +19,7 @@
 <h1>Travaux Maison</h1>
 
 <div class="form">
-    <input type="date" id="date">
+    <input type="date" id="date" placeholder="Date">
     <select id="type">
         <option>Outillage</option>
         <option>Prestations</option>
@@ -25,24 +27,15 @@
     </select>
     <input placeholder="Catégorie" id="category">
     <input placeholder="Description" id="description">
+    <input placeholder="Bénéficiaire / Société" id="recipient">
     <input type="number" placeholder="Montant €" id="amount">
-    <button onclick="addExpense()">Ajouter</button>
-</div>
-
-<div class="table-container">
-    <table>
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Catégorie</th>
-            <th>Description</th>
-            <th>€</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody id="list"></tbody>
-    </table>
+    <select id="status">
+        <option value="Acompte" selected>Acompte</option>
+        <option value="Total">Total</option>
+        <option value="Payé">Payé</option>
+    </select>
+    <input type="date" id="dueDate" placeholder="Date d’échéance">
+    <button onclick="addExpense()">Ajouter <i class="fas fa-plus"></i></button>
 </div>
 
 <div class="totals">
@@ -63,6 +56,8 @@
         <strong id="total">0 €</strong>
     </div>
 </div>
+
+<div id="cards-container"></div>
 
 <script src="app.js"></script>
 </body>
