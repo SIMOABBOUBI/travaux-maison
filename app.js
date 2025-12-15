@@ -2,18 +2,21 @@
 // 🔥 Configuration et Initialisation Firebase
 // =========================================================
 const firebaseConfig = {
-  apiKey: "AIzaSyDtGiCjOy33ZI03QAe_ELIHfg9H05tVtK4",
-  authDomain: "travaux-maison-9e170.firebaseapp.com",
-  projectId: "travaux-maison-9e170",
-  storageBucket: "travaux-maison-9e170.appspot.com",
-  messagingSenderId: "34299316168",
-  appId: "1:34299316168:web:d42197f3bdeb9d5759a2fd",
-  measurementId: "G-7NVN7W9HXX"
+    apiKey: "AIzaSyDtGiCjOy33ZI03QAe_ELIHfg9H05tVtK4",
+    authDomain: "travaux-maison-9e170.firebaseapp.com",
+    projectId: "travaux-maison-9e170",
+    storageBucket: "travaux-maison-9e170.appspot.com",
+    messagingSenderId: "34299316168",
+    appId: "1:34299316168:web:d42197f3bdeb9d5759a2fd",
+    measurementId: "G-7NVN7W9HXX"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const expensesRef = db.collection("expenses");
+
+// NOUVEAU: Référence à la collection des tâches
+const tasksRef = db.collection("tasks");
 
 // =========================================================
 // 🧩 DOM Cache & Utilitaires
@@ -27,7 +30,7 @@ const BUDGET_CIBLE = {
     "Total": 40000
 };
 
-// Cache des éléments du formulaire
+// Cache des éléments du formulaire de DÉPENSE
 const expenseForm = document.getElementById("expense-form");
 const dateInput = document.getElementById("date");
 const typeInput = document.getElementById("type");
@@ -50,13 +53,23 @@ const totalPending = document.getElementById("total-pending");
 const cardsContainer = document.getElementById("cards-container");
 const toastContainer = document.getElementById("toast-container");
 
-// --- NOUVEAU: Éléments DOM pour le Budget ---
+// --- Éléments DOM pour le Budget ---
 const outillageBudget = document.getElementById("outillage-budget");
 const prestationsBudget = document.getElementById("prestations-budget");
 const grossesBudget = document.getElementById("grosses-budget");
 const totalBudget = document.getElementById("total-budget");
 const progressTracker = document.getElementById("progress-tracker");
 const overallProgress = document.getElementById("overall-progress");
+
+// --- NOUVEAU: Éléments DOM pour les Tâches ---
+const taskForm = document.getElementById("task-form");
+const taskNameInput = document.getElementById("task-name");
+const taskResponsibleInput = document.getElementById("task-responsible");
+const taskDueDateInput = document.getElementById("task-taskDueDate");
+const addTaskButton = document.getElementById("add-task-btn");
+const tasksContainer = document.getElementById("tasks-container");
+const overallTaskProgressText = document.getElementById("overall-task-progress");
+const taskProgressBar = document.getElementById("task-progress-bar");
 
 // --- UTILS ---
 
@@ -69,7 +82,6 @@ const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', {
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
-        // Utiliser la date du jour pour éviter le décalage horaire lors de la création de l'objet Date
         return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
@@ -94,6 +106,13 @@ function showToast(message, type = 'info') {
         toast.addEventListener('transitionend', () => toast.remove());
     }, 4000);
 }
+
+// Initialisation : Prépare la date du jour
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+});
+
 
 // =========================================================
 // ➕ Ajout de Dépense (Gestion du Formulaire)
@@ -129,10 +148,13 @@ expenseForm.addEventListener('submit', async (e) => {
 
             status: statusInput.value,
             dueDate: dueDateInput.value || '',
+
+            createdAt: firebase.firestore.FieldValue.serverTimestamp() // Utile pour le tri
         });
 
         expenseForm.reset();
         statusInput.value = 'Payé';
+        dateInput.value = new Date().toISOString().split('T')[0]; // Pré-remplir la date du jour après l'envoi
         showToast("Dépense ajoutée avec succès !", 'success');
 
     } catch (error) {
@@ -160,7 +182,6 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         const docId = doc.id;
         const amount = e.amount;
 
-        // CORRECTION DE L'ERREUR 'undefined'
         const expenseStatus = e.status || "Inconnu";
         const paidBy = e.paidBy || "Moi";
         const reimbursementStatus = e.reimbursementStatus || "N/A";
@@ -303,5 +324,129 @@ window.postponeExpense = async (id, currentDueDate) => {
         }
     } else if (newDate) {
         showToast("Format de date invalide. Utilisez YYYY-MM-DD.", 'error');
+    }
+}
+
+// =========================================================
+// 🚧 NOUVEAU: Gestion des Tâches (Travaux Physiques)
+// =========================================================
+
+taskForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!taskNameInput.value) {
+        return showToast("Veuillez donner un nom à la tâche.", 'error');
+    }
+
+    addTaskButton.disabled = true;
+    addTaskButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ajout en cours...';
+
+    try {
+        await tasksRef.add({
+            name: taskNameInput.value,
+            responsible: taskResponsibleInput.value,
+            taskDueDate: taskDueDateInput.value || '',
+            completed: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        taskForm.reset();
+        showToast("Tâche ajoutée avec succès !", 'success');
+
+    } catch (error) {
+        console.error("Erreur d'ajout de tâche : ", error);
+        showToast("Erreur lors de l'ajout de la tâche.", 'error');
+    } finally {
+        addTaskButton.disabled = false;
+        addTaskButton.innerHTML = '<i class="fas fa-check-double"></i> Ajouter la Tâche';
+    }
+});
+
+// Écoute des tâches en temps réel
+tasksRef.orderBy("createdAt", "asc").onSnapshot(snapshot => {
+    let totalTasks = 0;
+    let completedTasks = 0;
+    tasksContainer.innerHTML = '';
+    const today = new Date().toISOString().split('T')[0];
+
+    snapshot.forEach(doc => {
+        const t = doc.data();
+        const docId = doc.id;
+
+        totalTasks++;
+        if (t.completed) {
+            completedTasks++;
+        }
+
+        const isOverdue = t.taskDueDate && t.taskDueDate < today && !t.completed;
+
+        // Affichage de la tâche
+        const taskHTML = `
+            <div class="task-card ${t.completed ? 'task-completed' : ''} ${isOverdue ? 'task-overdue' : ''}" data-id="${docId}">
+                <div class="task-info">
+                    <input type="checkbox" id="task-${docId}" ${t.completed ? 'checked' : ''} onchange="toggleTaskStatus('${docId}', ${t.completed})">
+                    <label for="task-${docId}">
+                        <span class="task-name">${t.name}</span>
+                        <span class="task-responsible">(${t.responsible})</span>
+                    </label>
+                </div>
+                <div class="task-meta">
+                    <span class="task-due-date">Échéance: ${formatDate(t.taskDueDate)}</span>
+                    <button class="action-btn delete-task-btn" onclick="deleteTask('${docId}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+        tasksContainer.insertAdjacentHTML('beforeend', taskHTML);
+    });
+
+    // Mise à jour de la barre de progression des tâches
+    updateTaskProgress(totalTasks, completedTasks);
+});
+
+
+/**
+ * Met à jour la barre de progression physique des travaux
+ */
+function updateTaskProgress(totalTasks, completedTasks) {
+    const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    overallTaskProgressText.textContent = `${percentage}% (${completedTasks} / ${totalTasks} Tâches Terminées)`;
+    taskProgressBar.style.width = `${percentage}%`;
+}
+
+
+// Basculer le statut Complété/Incomplet (rendu global)
+window.toggleTaskStatus = async (id, currentCompletedStatus) => {
+    const newCompletedStatus = !currentCompletedStatus;
+    const updateData = {
+        completed: newCompletedStatus,
+    };
+
+    // Utiliser FieldValue.serverTimestamp() pour marquer l'heure de fin
+    if (newCompletedStatus) {
+        updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+    } else {
+        // Supprimer le champ 'completedAt' si la tâche est réouverte
+        updateData.completedAt = firebase.firestore.FieldValue.delete();
+    }
+
+    try {
+        await tasksRef.doc(id).update(updateData);
+        showToast(newCompletedStatus ? "Tâche marquée comme terminée !" : "Tâche réouverte.", 'info');
+    } catch (error) {
+        showToast("Erreur lors de la mise à jour du statut de la tâche.", 'error');
+        console.error("Erreur de mise à jour de tâche : ", error);
+    }
+}
+
+// Supprimer une tâche (rendu global)
+window.deleteTask = async (id) => {
+    if (!confirm("Confirmer la suppression de cette tâche ?")) return;
+    try {
+        await tasksRef.doc(id).delete();
+        showToast("Tâche supprimée !", 'success');
+    } catch (error) {
+        showToast("Erreur lors de la suppression de la tâche.", 'error');
+        console.error("Erreur de suppression de tâche : ", error);
     }
 }

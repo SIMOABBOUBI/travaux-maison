@@ -75,7 +75,7 @@ body {
 .total-paid strong { color: #28a745; }
 .total-pending strong { color: #dc3545; }
 
-/* NOUVEAU: Styles pour le Budget */
+/* Styles pour le Budget */
 .stat-card.category-card {
     border-top: 5px solid #1a73e8;
     border-left: none;
@@ -170,7 +170,7 @@ body {
 }
 
 
-/* --- Section de Suivi de Projet (Progression) --- */
+/* --- Section de Suivi de Projet (Progression Budget) --- */
 .project-tracker {
     background: white;
     padding: 25px 30px;
@@ -418,11 +418,132 @@ body {
 .toast-info { border-color: #1a73e8; color: #1a73e8; }
 
 
+/* ========================================================= */
+/* --- NOUVEAU: Styles pour la Gestion des Tâches (Task Management) --- */
+/* ========================================================= */
+.task-management {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.task-form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto; /* Nom, Responsable, Échéance, Bouton */
+    gap: 20px;
+    align-items: end;
+}
+
+.task-btn {
+    grid-column: span 1; /* Le bouton ne prend qu'une seule colonne */
+    padding: 12px;
+}
+
+.task-list-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Barres de progression des tâches (utilise une couleur d'accent différente) */
+.progress-bar.task-progress {
+    background: linear-gradient(90deg, #17a2b8, #1a73e8); /* Bleu/Cyan pour les tâches */
+}
+
+/* Style de chaque carte de tâche */
+.task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: background 0.3s, opacity 0.3s;
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.task-info input[type="checkbox"] {
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    /* Personnalisation simple du checkbox */
+    accent-color: #28a745;
+}
+
+.task-name {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #333;
+    margin-right: 10px;
+}
+.task-responsible {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.task-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.task-due-date {
+    font-size: 0.9em;
+    color: #1a73e8;
+}
+
+.delete-task-btn {
+    background: transparent;
+    color: #dc3545;
+    padding: 5px 8px;
+    font-size: 1.1em;
+}
+.delete-task-btn:hover {
+    background: #fae0e2;
+}
+
+/* États des tâches */
+.task-card.task-completed {
+    background: #e9f5e9;
+    opacity: 0.7;
+    border-left: 4px solid #28a745;
+}
+.task-card.task-completed .task-name {
+    text-decoration: line-through;
+    color: #666;
+}
+
+.task-card.task-overdue:not(.task-completed) {
+    border: 2px solid #dc3545;
+    background: #fffafa;
+}
+
 /* --- Réactivité (Mobile-First) --- */
 @media(max-width: 992px) {
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
+    .task-form-grid {
+        grid-template-columns: 1fr 1fr; /* 2 colonnes */
+    }
+    .task-form-grid .form-group:nth-child(3) {
+        /* Déplace la date sur la même ligne que le bouton pour les petits écrans */
+        grid-column: 1 / span 1;
+    }
+    .task-form-grid .task-btn {
+        grid-column: 2 / span 1;
+    }
+
 }
 
 @media(max-width: 600px) {
@@ -430,7 +551,7 @@ body {
         padding: 10px;
     }
     .modern-form {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
     .dashboard-totals {
         grid-template-columns: 1fr;
@@ -441,7 +562,31 @@ body {
     .expense-actions {
         flex-direction: column;
     }
-    .card-amount {
-        font-size: 1.2rem;
+
+    /* CORRECTION ICI : Adapter la grille des tâches pour mobile */
+    .task-form-grid {
+        grid-template-columns: 1fr; /* Une seule colonne */
+    }
+    .task-form-grid .form-group:nth-child(3),
+    .task-form-grid .task-btn {
+        grid-column: 1 / -1; /* S'assurer qu'ils sont sur une ligne complète */
+    }
+
+    /* Adapter la carte de tâche pour mobile */
+    .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .task-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .task-info label {
+        display: flex;
+        flex-direction: column;
+    }
+    .task-responsible {
+        margin-left: 0;
     }
 }
