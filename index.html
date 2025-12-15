@@ -2,67 +2,96 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Travaux Maison</title>
+    <title>Suivi Financier Travaux</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<h1>Travaux Maison</h1>
+<header class="app-header">
+    <i class="fas fa-home"></i>
+    <h1>Suivi Financier **Travaux Maison**</h1>
+</header>
 
-<div class="form">
-    <input type="date" id="date">
-    <select id="type">
-        <option>Outillage</option>
-        <option>Prestations</option>
-        <option>Grosses dépenses</option>
-    </select>
-    <input placeholder="Catégorie" id="category">
-    <input placeholder="Description" id="description">
-    <input type="number" placeholder="Montant €" id="amount">
-    <button onclick="addExpense()">Ajouter</button>
-</div>
+<main class="container">
 
-<div class="table-container">
-    <table>
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Catégorie</th>
-            <th>Description</th>
-            <th>€</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody id="list"></tbody>
-    </table>
-</div>
+    <section class="dashboard-totals">
+        <div class="stat-card" data-type="Outillage">
+            <p>Outillage</p>
+            <strong id="outillage">0 €</strong>
+        </div>
+        <div class="stat-card" data-type="Prestations">
+            <p>Prestations</p>
+            <strong id="prestations">0 €</strong>
+        </div>
+        <div class="stat-card" data-type="Grosses dépenses">
+            <p>Grosses dépenses</p>
+            <strong id="grosses">0 €</strong>
+        </div>
+        <div class="stat-card total-paid">
+            <p>Total Déjà Payé</p>
+            <strong id="total-paid">0 €</strong>
+        </div>
+        <div class="stat-card total-pending">
+            <p>Reste à Payer</p>
+            <strong id="total-pending">0 €</strong>
+        </div>
+    </section>
 
-<div class="totals">
-    <div class="card outillage">
-        <p>Outillage</p>
-        <strong id="outillage">0 €</strong>
-    </div>
-    <div class="card prestations">
-        <p>Prestations</p>
-        <strong id="prestations">0 €</strong>
-    </div>
-    <div class="card grosses">
-        <p>Grosses dépenses</p>
-        <strong id="grosses">0 €</strong>
-    </div>
-    <div class="card total">
-        <p>Total</p>
-        <strong id="total">0 €</strong>
-    </div>
-</div>
+    <section class="form-section">
+        <fieldset>
+            <legend>Ajouter une Nouvelle Dépense</legend>
+            <form id="expense-form" class="modern-form">
+
+                <div class="form-group"><label for="date">Date</label><input type="date" id="date" name="date" required></div>
+
+                <div class="form-group">
+                    <label for="type">Type de Dépense</label>
+                    <select id="type" name="type" required>
+                        <option value="Outillage">Outillage</option>
+                        <option value="Prestations">Prestations</option>
+                        <option value="Grosses dépenses">Grosses dépenses</option>
+                    </select>
+                </div>
+
+                <div class="form-group"><label for="category">Catégorie</label><input placeholder="Plomberie, Électricité..." id="category" name="category" required></div>
+                <div class="form-group"><label for="description">Description</label><input placeholder="Détails de l'achat/prestation" id="description" name="description" required></div>
+                <div class="form-group"><label for="recipient">Bénéficiaire</label><input placeholder="Nom du fournisseur" id="recipient" name="recipient" required></div>
+
+                <div class="form-group"><label for="amount">Montant (€)</label><input type="number" min="0.01" step="0.01" placeholder="Montant €" id="amount" name="amount" required></div>
+
+                <div class="form-group">
+                    <label for="status">Statut</label>
+                    <select id="status" name="status" required>
+                        <option value="Acompte">Acompte</option>
+                        <option value="Total">Total</option>
+                        <option value="Payé" selected>Payé</option>
+                        <option value="En attente">En attente</option>
+                    </select>
+                </div>
+
+                <div class="form-group"><label for="dueDate">Échéance</label><input type="date" id="dueDate" name="dueDate"></div>
+
+                <button type="submit" id="add-expense-btn" class="submit-btn full-width">
+                    <i class="fas fa-plus"></i> Ajouter la Dépense
+                </button>
+            </form>
+        </fieldset>
+    </section>
+
+    <div id="toast-container"></div>
+
+    <section class="list-section">
+        <h2>Dépenses Enregistrées</h2>
+        <div id="cards-container" class="expense-grid">
+        </div>
+    </section>
+
+</main>
 
 <script src="app.js"></script>
 </body>

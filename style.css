@@ -1,102 +1,346 @@
+/* Import Roboto: Changé pour Inter */
 body {
-  font-family: 'Roboto', sans-serif;
-  padding: 15px;
-  background: #f9f9f9;
-  color: #333;
+    font-family: 'Inter', sans-serif;
+    background: #f0f4f8; /* Arrière-plan très clair */
+    margin: 0;
+    padding: 0;
+    color: #333;
+    min-height: 100vh;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.form {
-  max-width: 500px;
-  margin: 0 auto 20px auto;
-}
-
-.form input, .form select, .form button {
-  width: 100%;
-  padding: 12px;
-  margin: 5px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-.form button {
-  background-color: #007BFF;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.form button:hover {
-  opacity: 0.8;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px 10px;
-  text-align: center;
-}
-
-tr:nth-child(even) {
-  background-color: #f4f4f4;
-}
-
-tr:hover {
-  background-color: #e0f7fa;
-}
-
-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.totals {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-.card {
-  flex: 1 1 150px;
-  padding: 15px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-.card.outillage { background: #d0f0c0; }
-.card.prestations { background: #ffe5b4; }
-.card.grosses { background: #f0d0f0; }
-.card.total { background: #c0e0ff; font-weight: bold; }
-
-@media (max-width: 600px) {
-  .totals {
-    flex-direction: column;
+/* --- En-tête de l'application --- */
+.app-header {
+    display: flex;
     align-items: center;
-  }
+    justify-content: center;
+    padding: 20px 0;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+.app-header h1 {
+    font-weight: 800;
+    color: #1a73e8; /* Bleu moderne */
+    margin: 0 0 0 10px;
+    font-size: 1.8rem;
+}
+.app-header i {
+    font-size: 1.8rem;
+    color: #1a73e8;
+}
+.app-header strong {
+    font-weight: 800;
+}
+
+/* --- Section Totaux (Dashboard) --- */
+.dashboard-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombre douce */
+    transition: transform 0.3s;
+    border: 1px solid #eee;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.stat-card p {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.stat-card strong {
+    font-size: 28px;
+    font-weight: 700;
+    display: block;
+    color: #333;
+}
+
+/* Couleurs spécifiques pour les totaux importants */
+.stat-card[data-type="Outillage"] { border-left: 5px solid #4CAF50; } /* Vert */
+.stat-card[data-type="Prestations"] { border-left: 5px solid #FF9800; } /* Orange */
+.stat-card[data-type="Grosses dépenses"] { border-left: 5px solid #9C27B0; } /* Violet */
+
+.total-paid strong { color: #28a745; }
+.total-pending strong { color: #dc3545; }
+
+
+/* --- Section Formulaire --- */
+.form-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+.form-section fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+.form-section legend {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a73e8;
+    margin-bottom: 20px;
+}
+
+.modern-form {
+    display: grid;
+    /* 4 colonnes pour les grands écrans */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-form label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.modern-form input, .modern-form select {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    background: #fcfcfc;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.modern-form input:focus, .modern-form select:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    outline: none;
+}
+
+.submit-btn {
+    grid-column: 1 / -1; /* Prend toute la largeur */
+    padding: 15px;
+    background: #1a73e8;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #0d47a1;
+}
+.submit-btn:disabled {
+    background: #90a4ae;
+    cursor: not-allowed;
+}
+
+/* --- Section Liste des Dépenses --- */
+.list-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.expense-grid {
+    display: grid;
+    /* Colonnes adaptatives */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 20px;
+}
+
+.expense-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.expense-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
+}
+
+.card-type {
+    font-weight: 600;
+    color: #1a73e8;
+}
+
+.card-amount {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+.pending-amount { color: #dc3545; }
+.paid-amount { color: #28a745; }
+
+.card-details p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Badges de Statut */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+}
+.status-acompte { background: #ff9800; }
+.status-total { background: #17a2b8; }
+.status-payé { background: #28a745; }
+.status-en-attente { background: #6c757d; }
+
+.due-date {
+    font-size: 0.8em;
+    color: #777;
+}
+
+/* États spécifiques des cartes */
+.expense-card.paid {
+    border-left: 5px solid #28a745;
+    opacity: 0.85;
+}
+
+.expense-card.overdue {
+    border: 2px solid #dc3545;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+}
+
+/* --- Actions de la carte --- */
+.expense-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+    flex-grow: 1;
+}
+
+.pay-btn { background: #28a745; color: white; }
+.pay-btn:hover { background: #1e7e34; }
+.postpone-btn { background: #ffc107; color: #333; }
+.postpone-btn:hover { background: #e0a800; }
+.delete-btn { background: #dc3545; color: white; }
+.delete-btn:hover { background: #c82333; }
+
+/* --- Toast Notifications (UX Moderne) --- */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-top: 10px;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.5s, transform 0.5s;
+    font-weight: 600;
+    border-left: 5px solid;
+}
+
+.toast i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.toast-success { border-color: #28a745; color: #28a745; }
+.toast-error { border-color: #dc3545; color: #dc3545; }
+.toast-info { border-color: #1a73e8; color: #1a73e8; }
+
+
+/* --- Réactivité (Mobile-First) --- */
+@media(max-width: 992px) {
+    .modern-form { 
+        /* 2 colonnes en tablette */
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+@media(max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    .modern-form { 
+        /* 1 colonne en mobile */
+        grid-template-columns: 1fr; 
+    }
+    .dashboard-totals {
+        grid-template-columns: 1fr;
+    }
+    .expense-grid {
+        grid-template-columns: 1fr;
+    }
+    .expense-actions {
+        flex-direction: column;
+    }
+    .card-amount {
+        font-size: 1.2rem;
+    }
 }
