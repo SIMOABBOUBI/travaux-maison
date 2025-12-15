@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <title>Travaux Maison</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Style -->
     <link rel="stylesheet" href="style.css">
-
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<h1>Dépenses Travaux</h1>
+<h1>Travaux Maison</h1>
 
 <div class="form">
     <input type="date" id="date">
@@ -27,25 +29,39 @@
     <button onclick="addExpense()">Ajouter</button>
 </div>
 
-<table>
-    <thead>
-    <tr>
-        <th>Date</th>
-        <th>Type</th>
-        <th>Catégorie</th>
-        <th>Description</th>
-        <th>€</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody id="list"></tbody>
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Catégorie</th>
+            <th>Description</th>
+            <th>€</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="list"></tbody>
+    </table>
+</div>
 
 <div class="totals">
-    <p>Outillage : <span id="outillage">0</span> €</p>
-    <p>Prestations : <span id="prestations">0</span> €</p>
-    <p>Grosses dépenses : <span id="grosses">0</span> €</p>
-    <strong>Total : <span id="total">0</span> €</strong>
+    <div class="card outillage">
+        <p>Outillage</p>
+        <strong id="outillage">0 €</strong>
+    </div>
+    <div class="card prestations">
+        <p>Prestations</p>
+        <strong id="prestations">0 €</strong>
+    </div>
+    <div class="card grosses">
+        <p>Grosses dépenses</p>
+        <strong id="grosses">0 €</strong>
+    </div>
+    <div class="card total">
+        <p>Total</p>
+        <strong id="total">0 €</strong>
+    </div>
 </div>
 
 <script src="app.js"></script>
