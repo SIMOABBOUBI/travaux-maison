@@ -1,4 +1,4 @@
-// Config Firebase
+// 🔥 Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDtGiCjOy33ZI03QAe_ELIHfg9H05tVtK4",
   authDomain: "travaux-maison-9e170.firebaseapp.com",
@@ -16,6 +16,8 @@ const expensesRef = db.collection("expenses");
 
 // Ajouter une dépense
 function addExpense() {
+  if(!date.value || !category.value || !description.value || !amount.value) return alert("Remplis tous les champs !");
+
   expensesRef.add({
     date: date.value,
     type: type.value,
@@ -23,9 +25,15 @@ function addExpense() {
     description: description.value,
     amount: Number(amount.value)
   });
+
+  // Reset formulaire
+  date.value = '';
+  category.value = '';
+  description.value = '';
+  amount.value = '';
 }
 
-// Écouter les changements en temps réel
+// Afficher en temps réel
 expensesRef.orderBy("date").onSnapshot(snapshot => {
   let html = "";
   let totals = { Outillage: 0, Prestations: 0, "Grosses dépenses": 0 };
@@ -40,19 +48,21 @@ expensesRef.orderBy("date").onSnapshot(snapshot => {
         <td>${e.type}</td>
         <td>${e.category}</td>
         <td>${e.description}</td>
-        <td>${e.amount}</td>
+        <td>${e.amount} €</td>
         <td><button onclick="deleteExpense('${doc.id}')">X</button></td>
       </tr>`;
   });
 
   list.innerHTML = html;
-  outillage.textContent = totals.Outillage;
-  prestations.textContent = totals.Prestations;
-  grosses.textContent = totals["Grosses dépenses"];
-  total.textContent = totals.Outillage + totals.Prestations + totals["Grosses dépenses"];
+  outillage.textContent = totals.Outillage + " €";
+  prestations.textContent = totals.Prestations + " €";
+  grosses.textContent = totals["Grosses dépenses"] + " €";
+  total.textContent = (totals.Outillage + totals.Prestations + totals["Grosses dépenses"]) + " €";
 });
 
 // Supprimer une dépense
 function deleteExpense(id) {
-  expensesRef.doc(id).delete();
+  if(confirm("Supprimer cette dépense ?")) {
+    expensesRef.doc(id).delete();
+  }
 }
