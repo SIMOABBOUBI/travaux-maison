@@ -14,15 +14,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const expensesRef = db.collection("expenses");
-
-// NOUVEAU: Référence à la collection des tâches
-const tasksRef = db.collection("tasks");
+const tasksRef = db.collection("tasks"); // Référence aux tâches
 
 // =========================================================
 // 🧩 DOM Cache & Utilitaires
 // =========================================================
 
-// --- NOUVEAU: Budget Cible (Personnalisable) ---
+// --- Budget Cible (Personnalisable) ---
 const BUDGET_CIBLE = {
     "Outillage": 5000,
     "Prestations": 20000,
@@ -44,7 +42,7 @@ const paidByInput = document.getElementById("paidBy");
 const reimbursementStatusInput = document.getElementById("reimbursementStatus");
 const addButton = document.getElementById("add-expense-btn");
 
-// Cache des totaux et du conteneur des cartes
+// Cache des totaux et du conteneur des cartes de DÉPENSE
 const outillageTotal = document.getElementById("outillage");
 const prestationsTotal = document.getElementById("prestations");
 const grossesTotal = document.getElementById("grosses");
@@ -61,7 +59,7 @@ const totalBudget = document.getElementById("total-budget");
 const progressTracker = document.getElementById("progress-tracker");
 const overallProgress = document.getElementById("overall-progress");
 
-// --- NOUVEAU: Éléments DOM pour les Tâches ---
+// --- Éléments DOM pour les Tâches ---
 const taskForm = document.getElementById("task-form");
 const taskNameInput = document.getElementById("task-name");
 const taskResponsibleInput = document.getElementById("task-responsible");
@@ -70,6 +68,11 @@ const addTaskButton = document.getElementById("add-task-btn");
 const tasksContainer = document.getElementById("tasks-container");
 const overallTaskProgressText = document.getElementById("overall-task-progress");
 const taskProgressBar = document.getElementById("task-progress-bar");
+
+// NOUVEAU: Cache des éléments DOM pour les Tâches améliorées
+const taskLocationInput = document.getElementById("task-location");
+const taskPriorityInput = document.getElementById("task-priority");
+const taskEstimatedCostInput = document.getElementById("task-estimatedCost");
 
 // --- UTILS ---
 
@@ -142,19 +145,18 @@ expenseForm.addEventListener('submit', async (e) => {
             recipient: recipientInput.value,
             amount: amountValue,
 
-            // Champs Remboursement
             paidBy: paidByInput.value,
             reimbursementStatus: reimbursementStatusInput.value,
 
             status: statusInput.value,
             dueDate: dueDateInput.value || '',
 
-            createdAt: firebase.firestore.FieldValue.serverTimestamp() // Utile pour le tri
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         expenseForm.reset();
         statusInput.value = 'Payé';
-        dateInput.value = new Date().toISOString().split('T')[0]; // Pré-remplir la date du jour après l'envoi
+        dateInput.value = new Date().toISOString().split('T')[0];
         showToast("Dépense ajoutée avec succès !", 'success');
 
     } catch (error) {
@@ -194,7 +196,7 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         isPaid ? (totalPaidAmount += amount) : (totalPendingAmount += amount);
 
         const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
-        const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-');
+        const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-').replace('/', '');
 
         // --- Rendu de la carte avec Template Literals ---
         const cardHTML = `
@@ -236,30 +238,25 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
     const totalSpent = totalPaidAmount + totalPendingAmount;
     const totalBudgetAmount = BUDGET_CIBLE.Total;
 
-    // Calcul de l'Avancement
     const progressPercentage = (totalSpent / totalBudgetAmount) * 100;
     const clampedProgress = Math.min(100, Math.round(progressPercentage));
     const progressText = progressPercentage > 100 ? `Dépassement de ${formatCurrency(totalSpent - totalBudgetAmount)}` : `${clampedProgress}% Atteint`;
 
-    // Mise à jour des Totaux et du Budget
     outillageTotal.textContent = formatCurrency(totals.Outillage);
     prestationsTotal.textContent = formatCurrency(totals.Prestations);
     grossesTotal.textContent = formatCurrency(totals["Grosses dépenses"]);
     totalPaid.textContent = formatCurrency(totalPaidAmount);
     totalPending.textContent = formatCurrency(totalPendingAmount);
 
-    // Affichage des Budgets Cibles
     outillageBudget.textContent = formatCurrency(BUDGET_CIBLE.Outillage);
     prestationsBudget.textContent = formatCurrency(BUDGET_CIBLE.Prestations);
     grossesBudget.textContent = formatCurrency(BUDGET_CIBLE["Grosses dépenses"]);
     totalBudget.textContent = formatCurrency(totalBudgetAmount);
 
-    // Mise à jour de la barre de progression
     overallProgress.style.width = `${clampedProgress}%`;
     progressTracker.querySelector('p').textContent = progressText;
     progressTracker.querySelector('span').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
 
-    // Classe d'alerte si le budget est dépassé
     if (progressPercentage > 100) {
         overallProgress.classList.add('budget-alert');
     } else {
@@ -271,7 +268,6 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
 // 🗑️ Actions de Dépense (CRUD)
 // =========================================================
 
-// Supprimer (rendu global)
 window.deleteExpense = async (id) => {
     if (!confirm("Confirmer la suppression de cette dépense ?")) return;
     try {
@@ -283,7 +279,6 @@ window.deleteExpense = async (id) => {
     }
 }
 
-// Mettre à jour le Statut (rendu global)
 window.updateStatusExpense = async (id, newStatus) => {
     try {
         await expensesRef.doc(id).update({ status: newStatus });
@@ -294,7 +289,6 @@ window.updateStatusExpense = async (id, newStatus) => {
     }
 }
 
-// Marquer comme Remboursé (rendu global)
 window.markReimbursed = async (id) => {
     if (!confirm("Confirmer le remboursement de cette dépense ?")) return;
     try {
@@ -306,8 +300,6 @@ window.markReimbursed = async (id) => {
     }
 }
 
-
-// Reporter l'échéance (rendu global)
 window.postponeExpense = async (id, currentDueDate) => {
     const newDate = prompt("Nouvelle date d'échéance ? (Format YYYY-MM-DD)", currentDueDate);
 
@@ -328,14 +320,16 @@ window.postponeExpense = async (id, currentDueDate) => {
 }
 
 // =========================================================
-// 🚧 NOUVEAU: Gestion des Tâches (Travaux Physiques)
+// 🚧 Gestion des Tâches (Travaux Physiques)
 // =========================================================
 
 taskForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    if (!taskNameInput.value) {
-        return showToast("Veuillez donner un nom à la tâche.", 'error');
+    const estimatedCostValue = Number(taskEstimatedCostInput.value) || 0;
+
+    if (!taskNameInput.value || !taskLocationInput.value) {
+        return showToast("Veuillez remplir le nom et la localisation de la tâche.", 'error');
     }
 
     addTaskButton.disabled = true;
@@ -344,13 +338,19 @@ taskForm.addEventListener('submit', async (e) => {
     try {
         await tasksRef.add({
             name: taskNameInput.value,
+            location: taskLocationInput.value,
+            priority: taskPriorityInput.value,
             responsible: taskResponsibleInput.value,
             taskDueDate: taskDueDateInput.value || '',
+            estimatedCost: estimatedCostValue, // Utilisation du coût estimé
+
             completed: false,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         taskForm.reset();
+        taskResponsibleInput.value = 'Kimberley'; // Réinitialisation par défaut du responsable
+        taskPriorityInput.value = 'Moyenne'; // Réinitialisation par défaut de la priorité
         showToast("Tâche ajoutée avec succès !", 'success');
 
     } catch (error) {
@@ -380,17 +380,40 @@ tasksRef.orderBy("createdAt", "asc").onSnapshot(snapshot => {
 
         const isOverdue = t.taskDueDate && t.taskDueDate < today && !t.completed;
 
+        // Définition de la couleur de priorité
+        const priorityClass = t.priority ? t.priority.toLowerCase() : 'moyenne';
+        let priorityColor;
+        switch (t.priority) {
+            case 'Haute':
+                priorityColor = '#dc3545'; // Rouge
+                break;
+            case 'Moyenne':
+                priorityColor = '#ff9800'; // Orange
+                break;
+            case 'Basse':
+            default:
+                priorityColor = '#28a745'; // Vert
+                break;
+        }
+
         // Affichage de la tâche
         const taskHTML = `
-            <div class="task-card ${t.completed ? 'task-completed' : ''} ${isOverdue ? 'task-overdue' : ''}" data-id="${docId}">
+            <div class="task-card task-priority-${priorityClass} ${t.completed ? 'task-completed' : ''} ${isOverdue ? 'task-overdue' : ''}" data-id="${docId}">
                 <div class="task-info">
                     <input type="checkbox" id="task-${docId}" ${t.completed ? 'checked' : ''} onchange="toggleTaskStatus('${docId}', ${t.completed})">
                     <label for="task-${docId}">
                         <span class="task-name">${t.name}</span>
+                        <span class="task-location" style="color: #1a73e8; font-weight: 700;">[${t.location}]</span>
                         <span class="task-responsible">(${t.responsible})</span>
                     </label>
                 </div>
                 <div class="task-meta">
+                    <span class="task-priority-badge" style="background-color: ${priorityColor}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8em;">${t.priority}</span>
+
+                    ${t.estimatedCost > 0 ?
+                        `<span class="task-cost">Budget: ${formatCurrency(t.estimatedCost)}</span>`
+                        : ''}
+
                     <span class="task-due-date">Échéance: ${formatDate(t.taskDueDate)}</span>
                     <button class="action-btn delete-task-btn" onclick="deleteTask('${docId}')"><i class="fas fa-trash"></i></button>
                 </div>
@@ -422,11 +445,9 @@ window.toggleTaskStatus = async (id, currentCompletedStatus) => {
         completed: newCompletedStatus,
     };
 
-    // Utiliser FieldValue.serverTimestamp() pour marquer l'heure de fin
     if (newCompletedStatus) {
         updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
     } else {
-        // Supprimer le champ 'completedAt' si la tâche est réouverte
         updateData.completedAt = firebase.firestore.FieldValue.delete();
     }
 
