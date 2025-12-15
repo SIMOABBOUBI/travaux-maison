@@ -14,28 +14,45 @@ body {
     padding: 20px;
 }
 
-/* --- En-tête de l'application --- */
+/* --- En-tête de l'application & Navigation --- */
 .app-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 20px 0;
+    justify-content: space-between; /* Pour placer le bouton à droite */
+    padding: 20px; /* Augmenter le padding pour inclure le bouton */
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     margin-bottom: 20px;
 }
 .app-header h1 {
+    /* Centrer le titre */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     font-weight: 800;
     color: #1a73e8; /* Bleu moderne */
-    margin: 0 0 0 10px;
+    margin: 0;
     font-size: 1.8rem;
 }
-.app-header i {
+.app-header i:first-child {
     font-size: 1.8rem;
     color: #1a73e8;
+    z-index: 10;
 }
-.app-header strong {
-    font-weight: 800;
+.app-header a.nav-button {
+    font-size: 0.9em;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    background: #4CAF50; /* Vert pour attirer l'attention */
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: background 0.3s;
+    white-space: nowrap;
+    z-index: 10;
+}
+.app-header a.nav-button:hover {
+    background: #3e8e41;
 }
 
 /* --- Section Totaux (Dashboard) --- */
@@ -96,20 +113,20 @@ body {
 }
 
 
-/* --- Section Formulaire DÉPENSE --- */
-.form-section {
+/* --- Section Formulaires (DÉPENSE et TÂCHES) --- */
+.form-section, .task-management {
     background: white;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     margin-bottom: 30px;
 }
-.form-section fieldset {
+.form-section fieldset, .task-management fieldset {
     border: none;
     padding: 0;
     margin: 0;
 }
-.form-section legend {
+.form-section legend, .task-management legend {
     font-size: 1.4rem;
     font-weight: 700;
     color: #1a73e8;
@@ -120,6 +137,10 @@ body {
     grid-template-columns: repeat(4, 1fr);
     display: grid;
     gap: 20px;
+}
+.task-form-grid {
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
 }
 
 .form-group {
@@ -403,11 +424,6 @@ body {
     border-left: 5px solid;
 }
 
-.toast i {
-    margin-right: 10px;
-    font-size: 1.2em;
-}
-
 .toast.hide {
     opacity: 0;
     transform: translateX(100%);
@@ -431,14 +447,13 @@ body {
 
 .task-form-grid {
     display: grid;
-    /* 4 colonnes pour les 8 champs (sur 2 lignes) + 1 bouton (span 4) */
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     align-items: end;
 }
 
 .task-form-grid .task-btn {
-    grid-column: 1 / -1; /* Prend toute la largeur sur la dernière ligne */
+    grid-column: 1 / -1;
     padding: 12px;
 }
 
@@ -532,6 +547,8 @@ body {
     color: #dc3545;
     padding: 5px 8px;
     font-size: 1.1em;
+    border: none;
+    cursor: pointer;
 }
 .delete-task-btn:hover {
     background: #fae0e2;
@@ -543,6 +560,7 @@ body {
     color: white;
     padding: 5px 8px;
     font-size: 1.0em;
+    border: none;
 }
 .action-btn.update-progress-btn:hover {
     background: #138496;
@@ -570,8 +588,12 @@ body {
     opacity: 0.9;
 }
 
+/* ========================================================= */
 /* --- Réactivité (Mobile-First) --- */
+/* ========================================================= */
+
 @media(max-width: 992px) {
+    /* Sur les pages séparées, l'ordre n'est plus pertinent, mais les colonnes le sont */
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -583,29 +605,52 @@ body {
     .task-form-grid .form-group {
         grid-column: span 1;
     }
-
-    .task-form-grid .task-btn {
-        grid-column: 1 / -1;
-    }
 }
 
 @media(max-width: 600px) {
     .container {
         padding: 10px;
     }
-    .modern-form {
-        grid-template-columns: 1fr;
+
+    /* En-tête mobile */
+    .app-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 10px;
     }
+    .app-header h1 {
+        position: static;
+        transform: none;
+        font-size: 1.2rem;
+        margin: 0 5px;
+        order: 2;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .app-header i:first-child {
+        font-size: 1.2rem;
+        order: 1;
+    }
+    .app-header a.nav-button {
+        order: 3;
+        font-size: 0.8em;
+        padding: 5px 10px;
+    }
+
+    /* 1. Dashboard Totaux */
     .dashboard-totals {
         grid-template-columns: 1fr;
     }
-    .expense-grid {
-        grid-template-columns: 1fr;
-    }
-    .expense-actions {
-        flex-direction: column;
+    .stat-card strong {
+        font-size: 24px;
     }
 
+    /* 2. Formulaires (Dépenses et Tâches) */
+    .modern-form {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
     .task-form-grid {
         grid-template-columns: 1fr;
     }
@@ -613,26 +658,83 @@ body {
     .task-form-grid .form-group {
         grid-column: 1 / -1;
     }
+    .form-section fieldset, .task-management fieldset {
+        padding: 0;
+    }
 
+    /* 3. Liste des Dépenses */
+    .expense-grid {
+        grid-template-columns: 1fr;
+    }
+    .expense-card {
+        padding: 15px;
+    }
+    .card-amount {
+        font-size: 1.2rem;
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .card-type {
+        margin-bottom: 5px;
+    }
+    .card-details p {
+        font-size: 0.85em;
+    }
+    .card-footer {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .due-date {
+        margin-left: 0;
+    }
+    .expense-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .action-btn {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+
+    /* 4. Cartes de Tâches */
     .task-card {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+        padding: 15px;
     }
-    .task-meta {
+    .task-info {
         width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
     }
     .task-info label {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
     }
-    .task-responsible {
+    .task-name {
+        font-size: 1em;
+    }
+    .task-location, .task-responsible {
+        font-size: 0.85em;
         margin-left: 0;
     }
-    .task-due-date, .task-cost, .task-priority-badge, .task-progress-indicator {
-        flex-basis: auto;
+    .task-meta {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        border-top: 1px dashed #eee;
+        padding-top: 10px;
     }
+    .task-meta > * {
+        margin-bottom: 5px;
+    }
+    .update-progress-btn, .delete-task-btn {
+        flex-grow: 0;
+    }
+    .task-priority-badge { order: -1; }
+    .task-progress-indicator { order: 0; }
 }
