@@ -1,8 +1,8 @@
 body {
   font-family: 'Roboto', sans-serif;
-  padding: 15px;
-  background: #f9f9f9;
-  color: #333;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 10px;
 }
 
 h1 {
@@ -13,80 +13,45 @@ h1 {
 .form {
   max-width: 500px;
   margin: 0 auto 20px auto;
+  display: grid;
+  gap: 10px;
 }
 
 .form input, .form select, .form button {
-  width: 100%;
   padding: 12px;
-  margin: 5px 0;
   border-radius: 8px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
   font-size: 14px;
 }
 
 .form button {
-  background-color: #007BFF;
-  color: #fff;
+  background: #007BFF;
+  color: white;
   font-weight: bold;
-  border: none;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  border: none;
+  transition: 0.3s;
 }
 
 .form button:hover {
-  opacity: 0.8;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px 10px;
-  text-align: center;
-}
-
-tr:nth-child(even) {
-  background-color: #f4f4f4;
-}
-
-tr:hover {
-  background-color: #e0f7fa;
-}
-
-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
+  background: #0056b3;
 }
 
 .totals {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  margin-top: 20px;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
-.card {
-  flex: 1 1 150px;
+.totals .card {
+  flex: 1 1 120px;
   padding: 15px;
-  background: #fff;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: white;
   text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .card.outillage { background: #d0f0c0; }
@@ -94,9 +59,56 @@ button {
 .card.grosses { background: #f0d0f0; }
 .card.total { background: #c0e0ff; font-weight: bold; }
 
-@media (max-width: 600px) {
-  .totals {
-    flex-direction: column;
-    align-items: center;
-  }
+#cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.expense-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.expense-card.overdue {
+  border-left: 5px solid red;
+}
+
+.expense-card:hover {
+  transform: translateY(-2px);
+}
+
+.expense-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.expense-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.expense-actions button {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.expense-actions button.delete { background: #dc3545; color: white; }
+.expense-actions button.postpone { background: #ffc107; color: #333; }
+
+@media(max-width:600px){
+  .form { grid-template-columns: 1fr; }
+  .totals { flex-direction: column; }
 }
