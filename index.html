@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Travaux Maison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<h1>Dépenses Travaux</h1>
+
+<div class="form">
+    <input type="date" id="date">
+    <select id="type">
+        <option>Outillage</option>
+        <option>Prestations</option>
+        <option>Grosses dépenses</option>
+    </select>
+    <input placeholder="Catégorie" id="category">
+    <input placeholder="Description" id="description">
+    <input type="number" placeholder="Montant €" id="amount">
+    <button onclick="addExpense()">Ajouter</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Catégorie</th>
+        <th>Description</th>
+        <th>€</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="list"></tbody>
+</table>
+
+<div class="totals">
+    <p>Outillage : <span id="outillage">0</span> €</p>
+    <p>Prestations : <span id="prestations">0</span> €</p>
+    <p>Grosses dépenses : <span id="grosses">0</span> €</p>
+    <strong>Total : <span id="total">0</span> €</strong>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

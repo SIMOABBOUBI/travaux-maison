@@ -1,0 +1,26 @@
+body { font-family: Arial; padding: 10px; }
+h1 { text-align: center; }
+
+.form input, .form select, .form button {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+}
+
+table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  text-align: center;
+}
+
+.totals {
+  margin-top: 15px;
+  background: #f4f4f4;
+  padding: 10px;
+}
