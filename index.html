@@ -15,6 +15,9 @@
 <header class="app-header">
     <i class="fas fa-home"></i>
     <h1>Suivi Financier : Travaux Maison Musson</h1>
+    <a href="tasks.html" class="nav-button">
+        <i class="fas fa-hard-hat"></i> Tâches Travaux
+    </a>
 </header>
 
 <main class="container">
@@ -62,13 +65,14 @@
         </div>
     </section>
 
+    <div id="toast-container"></div>
+
     <section class="form-section">
         <fieldset>
             <legend>Ajouter une Nouvelle Dépense</legend>
             <form id="expense-form" class="modern-form">
 
                 <div class="form-group"><label for="date">Date</label><input type="date" id="date" name="date" required></div>
-
                 <div class="form-group">
                     <label for="type">Type de Dépense</label>
                     <select id="type" name="type" required>
@@ -81,9 +85,7 @@
                 <div class="form-group"><label for="category">Catégorie</label><input placeholder="Plomberie, Électricité..." id="category" name="category" required></div>
                 <div class="form-group"><label for="description">Description</label><input placeholder="Détails de l'achat/prestation" id="description" name="description" required></div>
                 <div class="form-group"><label for="recipient">Bénéficiaire</label><input placeholder="Nom du fournisseur" id="recipient" name="recipient" required></div>
-
                 <div class="form-group"><label for="amount">Montant (€)</label><input type="number" min="0.01" step="0.01" placeholder="Montant €" id="amount" name="amount" required></div>
-
                 <div class="form-group">
                     <label for="paidBy">Payé par</label>
                     <select id="paidBy" name="paidBy" required>
@@ -91,7 +93,7 @@
                         <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
                         <option value="Maman">Maman</option>
-                        <option value="Quertain">Quertain</option>
+                        <option value="Corentin">Corentin</option>
                         <option value="Gabi">Gabi</option>
                         <option value="Autre">Autre</option>
                     </select>
@@ -124,97 +126,9 @@
         </fieldset>
     </section>
 
-    <div id="toast-container"></div>
-
     <section class="list-section">
         <h2>Dépenses Enregistrées</h2>
         <div id="cards-container" class="expense-grid">
-        </div>
-    </section>
-
-    <section class="task-management">
-
-        <fieldset>
-            <legend>Ajouter une Tâche de Travaux (Améliorée)</legend>
-            <form id="task-form" class="modern-form task-form-grid">
-
-                <div class="form-group">
-                    <label for="task-location">Pièce/Localisation</label>
-                    <select id="task-location" name="location" required>
-                        <option value="" selected disabled>Choisir la pièce</option>
-                        <option value="Cuisine">Cuisine</option>
-                        <option value="Salon">Salon</option>
-                        <option value="SDB RDC">SDB RDC</option>
-                        <option value="Chambre 1">Chambre 1</option>
-                        <option value="Extérieur">Extérieur</option>
-                        <option value="Combles">Combles</option>
-                        <option value="Divers">Divers</option>
-                    </select>
-                </div>
-
-                <div class="form-group"><label for="task-name">Nom de la Tâche</label><input placeholder="Ex: Peinture Salon" id="task-name" name="name" required></div>
-
-                <div class="form-group">
-                    <label for="task-priority">Priorité</label>
-                    <select id="task-priority" name="priority" required>
-                        <option value="Moyenne" selected>Moyenne</option>
-                        <option value="Haute">Haute</option>
-                        <option value="Basse">Basse</option>
-                        <option value="Bloquée">Bloquée</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="task-progress">Avancement (%)</label>
-                    <select id="task-progress" name="progress" required>
-                        <option value="0" selected>0% (À faire)</option>
-                        <option value="25">25% (Démarrée)</option>
-                        <option value="50">50% (En cours)</option>
-                        <option value="75">75% (Finitions)</option>
-                        <option value="100">100% (Terminée)</option>
-                    </select>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="task-responsible">Responsable</label>
-                    <select id="task-responsible" name="responsible" required>
-                        <option value="Kimberley" selected>Kimberley</option>
-                        <option value="Simo">Simo</option>
-                        <option value="Tony">Tony</option>
-                        <option value="Maman">Maman</option>
-                        <option value="Quertain">Quertain</option>
-                        <option value="Gabi">Gabi</option>
-                        <option value="Artisan">Artisan</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-
-                <div class="form-group"><label for="task-estimatedCost">Coût Estimé (€)</label><input type="number" min="0" step="0.01" placeholder="Optionnel" id="task-estimatedCost" name="estimatedCost"></div>
-
-                <div class="form-group"><label for="task-taskDueDate">Échéance Tâche</label><input type="date" id="task-taskDueDate" name="taskDueDate"></div>
-
-                <div class="form-group">
-                    <label for="task-materialsLink">Lien Matériaux/Référence</label>
-                    <input type="url" placeholder="URL ou Ref." id="task-materialsLink" name="materialsLink">
-                </div>
-
-                <button type="submit" id="add-task-btn" class="submit-btn task-btn" style="grid-column: 1 / -1;">
-                    <i class="fas fa-check-double"></i> Ajouter la Tâche
-                </button>
-            </form>
-        </fieldset>
-
-        <h2 style="margin-top: 30px;">Avancement Physique des Travaux</h2>
-
-        <div class="progress-bar-container">
-            <p id="overall-task-progress">0% (0 / 0 Tâches Terminées)</p>
-            <div class="progress-bar-bg">
-                <div id="task-progress-bar" class="progress-bar task-progress" style="width: 0;"></div>
-            </div>
-        </div>
-
-        <div id="tasks-container" class="task-list-grid">
         </div>
     </section>
 
