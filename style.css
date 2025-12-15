@@ -1,4 +1,4 @@
-/* Import Roboto: Changé pour Inter */
+/* Import Inter Font */
 body {
     font-family: 'Inter', sans-serif;
     background: #f0f4f8; /* Arrière-plan très clair */
@@ -104,7 +104,7 @@ body {
 .modern-form {
     display: grid;
     /* 4 colonnes pour les grands écrans */
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
@@ -136,7 +136,8 @@ body {
 }
 
 .submit-btn {
-    grid-column: 1 / -1; /* Prend toute la largeur */
+    /* Prend toute la largeur, commence à la 1ère colonne */
+    grid-column: 1 / -1;
     padding: 15px;
     background: #1a73e8;
     color: white;
@@ -166,7 +167,7 @@ body {
 .expense-grid {
     display: grid;
     /* Colonnes adaptatives */
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
 }
 
@@ -215,14 +216,15 @@ body {
 
 .card-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start; /* Changement pour aligner les badges */
+    flex-wrap: wrap;
+    gap: 8px; /* Espace entre les badges */
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #f0f0f0;
 }
 
-/* Badges de Statut */
+/* Badges de Statut (Fournisseur) */
 .status-badge {
     padding: 5px 10px;
     border-radius: 20px;
@@ -230,15 +232,32 @@ body {
     font-weight: 600;
     color: white;
     text-transform: uppercase;
+    white-space: nowrap; /* Empêche les sauts de ligne */
 }
 .status-acompte { background: #ff9800; }
 .status-total { background: #17a2b8; }
 .status-payé { background: #28a745; }
 .status-en-attente { background: #6c757d; }
+.status-inconnu { background: #777; opacity: 0.7; }
+
+/* NOUVEAU: Styles pour le statut de Remboursement */
+.status-badge.status-a-rembourser {
+    background: #ffc107;
+    color: #333;
+}
+.status-badge.status-remboursé {
+    background: #17a2b8;
+}
+.status-badge.status-n\/a {
+    background: #6c757d;
+    opacity: 0.8;
+}
+
 
 .due-date {
     font-size: 0.8em;
     color: #777;
+    margin-left: auto; /* Pousse l'échéance à droite */
 }
 
 /* États spécifiques des cartes */
@@ -255,6 +274,7 @@ body {
 /* --- Actions de la carte --- */
 .expense-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 15px;
 }
@@ -276,6 +296,14 @@ body {
 .postpone-btn:hover { background: #e0a800; }
 .delete-btn { background: #dc3545; color: white; }
 .delete-btn:hover { background: #c82333; }
+/* NOUVEAU: Bouton Rembourser */
+.reimburse-btn {
+    background: #4CAF50;
+    color: white;
+}
+.reimburse-btn:hover {
+    background: #3e8e41;
+}
 
 /* --- Toast Notifications (UX Moderne) --- */
 #toast-container {

@@ -1,5 +1,6 @@
 // =========================================================
 // 🔥 Configuration et Initialisation Firebase
+// (Vos paramètres réels)
 // =========================================================
 const firebaseConfig = {
   apiKey: "AIzaSyDtGiCjOy33ZI03QAe_ELIHfg9H05tVtK4",
@@ -11,7 +12,6 @@ const firebaseConfig = {
   measurementId: "G-7NVN7W9HXX"
 };
 
-// Initialisation Firebase (compat)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const expensesRef = db.collection("expenses");
@@ -30,6 +30,10 @@ const recipientInput = document.getElementById("recipient");
 const amountInput = document.getElementById("amount");
 const statusInput = document.getElementById("status");
 const dueDateInput = document.getElementById("dueDate");
+// NOUVEAU
+const paidByInput = document.getElementById("paidBy");
+const reimbursementStatusInput = document.getElementById("reimbursementStatus");
+
 const addButton = document.getElementById("add-expense-btn");
 
 // Cache des totaux et du conteneur des cartes
@@ -105,6 +109,11 @@ expenseForm.addEventListener('submit', async (e) => {
             description: descriptionInput.value,
             recipient: recipientInput.value,
             amount: amountValue,
+
+            // NOUVEAU: Champs Remboursement
+            paidBy: paidByInput.value,
+            reimbursementStatus: reimbursementStatusInput.value,
+
             status: statusInput.value,
             dueDate: dueDateInput.value || '',
         });
@@ -138,17 +147,20 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
         const docId = doc.id;
         const amount = e.amount;
 
-        // CORRECTION DE L'ERREUR 'undefined' ICI
+        // CORRECTION DE L'ERREUR 'undefined' ICI pour les anciens documents
         const expenseStatus = e.status || "Inconnu";
+        const paidBy = e.paidBy || "Moi";
+        const reimbursementStatus = e.reimbursementStatus || "N/A";
 
         const isPaid = expenseStatus === "Payé";
+        const requiresReimbursement = (reimbursementStatus === "A rembourser");
         const isOverdue = e.dueDate && e.dueDate < today && !isPaid;
 
-        totals[e.type] = (totals[e.type] || 0) + amount; // Initialisation sécurisée
+        totals[e.type] = (totals[e.type] || 0) + amount;
         isPaid ? (totalPaidAmount += amount) : (totalPendingAmount += amount);
 
-        // Utilisation de la variable sécurisée
         const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
+        const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-'); // NOUVEAU
 
         // --- Rendu de la carte avec Template Literals ---
         const cardHTML = `
@@ -161,16 +173,23 @@ expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
                 <div class="card-details">
                     <p><strong>Description:</strong> ${e.description}</p>
                     <p><strong>Bénéficiaire:</strong> ${e.recipient || '-'}</p>
+                    <p><strong>Payé par:</strong> ${paidBy}</p>
                     <p><strong>Date:</strong> ${formatDate(e.date)}</p>
                 </div>
 
                 <div class="card-footer">
                     <span class="status-badge status-${statusClass}">${expenseStatus}</span>
+                    <span class="status-badge status-${reimbursementClass}">${reimbursementStatus}</span>
                     <span class="due-date">Échéance: ${formatDate(e.dueDate)}</span>
                 </div>
 
                 <div class="expense-actions">
-                    ${!isPaid ? `<button class="action-btn pay-btn" onclick="updateStatusExpense('${docId}', 'Payé')"><i class="fas fa-check"></i> Payer</button>` : ''}
+                    ${!isPaid ? `<button class="action-btn pay-btn" onclick="updateStatusExpense('${docId}', 'Payé')"><i class="fas fa-check"></i> Payer Fournisseur</button>` : ''}
+
+                    ${requiresReimbursement ?
+                        `<button class="action-btn reimburse-btn" onclick="markReimbursed('${docId}')"><i class="fas fa-hand-holding-usd"></i> Rembourser ${paidBy}</button>`
+                        : ''}
+
                     <button class="action-btn postpone-btn" onclick="postponeExpense('${docId}', '${e.dueDate || ''}')"><i class="fas fa-clock"></i> Reporter</button>
                     <button class="action-btn delete-btn" onclick="deleteExpense('${docId}')"><i class="fas fa-trash"></i> Supprimer</button>
                 </div>
@@ -207,12 +226,25 @@ window.deleteExpense = async (id) => {
 window.updateStatusExpense = async (id, newStatus) => {
     try {
         await expensesRef.doc(id).update({ status: newStatus });
-        showToast(`Statut mis à jour à "${newStatus}" !`, 'success');
+        showToast(`Statut fournisseur mis à jour à "${newStatus}" !`, 'success');
     } catch (error) {
         showToast("Erreur lors de la mise à jour du statut.", 'error');
         console.error("Erreur de mise à jour du statut : ", error);
     }
 }
+
+// NOUVEAU : Marquer comme Remboursé (rendu global)
+window.markReimbursed = async (id) => {
+    if (!confirm("Confirmer le remboursement de cette dépense ?")) return;
+    try {
+        await expensesRef.doc(id).update({ reimbursementStatus: "Remboursé" });
+        showToast("Remboursement marqué comme effectué !", 'success');
+    } catch (error) {
+        showToast("Erreur lors de la mise à jour du remboursement.", 'error');
+        console.error("Erreur de mise à jour du remboursement : ", error);
+    }
+}
+
 
 // Reporter l'échéance (rendu global)
 window.postponeExpense = async (id, currentDueDate) => {
