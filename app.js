@@ -28,7 +28,7 @@ const BUDGET_CIBLE = {
     "Outillage": 5000,
     "Prestations": 20000,
     "Grosses dépenses": 15000,
-    "Total": 40000
+    "Total": 94000
 };
 
 // --- Cache des Totaux et des Conteneurs ---
