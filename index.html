@@ -90,7 +90,8 @@
                         <option value="Kimberley" selected>Kimberley</option>
                         <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
-                        <option value="Maman">Maman</option> <option value="Quertain">Quertain</option>
+                        <option value="Maman">Maman</option>
+                        <option value="Quertain">Quertain</option>
                         <option value="Gabi">Gabi</option>
                         <option value="Autre">Autre</option>
                     </select>
@@ -134,10 +135,46 @@
     <section class="task-management">
 
         <fieldset>
-            <legend>Ajouter une Tâche de Travaux</legend>
+            <legend>Ajouter une Tâche de Travaux (Améliorée)</legend>
             <form id="task-form" class="modern-form task-form-grid">
 
+                <div class="form-group">
+                    <label for="task-location">Pièce/Localisation</label>
+                    <select id="task-location" name="location" required>
+                        <option value="" selected disabled>Choisir la pièce</option>
+                        <option value="Cuisine">Cuisine</option>
+                        <option value="Salon">Salon</option>
+                        <option value="SDB RDC">SDB RDC</option>
+                        <option value="Chambre 1">Chambre 1</option>
+                        <option value="Extérieur">Extérieur</option>
+                        <option value="Combles">Combles</option>
+                        <option value="Divers">Divers</option>
+                    </select>
+                </div>
+
                 <div class="form-group"><label for="task-name">Nom de la Tâche</label><input placeholder="Ex: Peinture Salon" id="task-name" name="name" required></div>
+
+                <div class="form-group">
+                    <label for="task-priority">Priorité</label>
+                    <select id="task-priority" name="priority" required>
+                        <option value="Moyenne" selected>Moyenne</option>
+                        <option value="Haute">Haute</option>
+                        <option value="Basse">Basse</option>
+                        <option value="Bloquée">Bloquée</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-progress">Avancement (%)</label>
+                    <select id="task-progress" name="progress" required>
+                        <option value="0" selected>0% (À faire)</option>
+                        <option value="25">25% (Démarrée)</option>
+                        <option value="50">50% (En cours)</option>
+                        <option value="75">75% (Finitions)</option>
+                        <option value="100">100% (Terminée)</option>
+                    </select>
+                </div>
+
 
                 <div class="form-group">
                     <label for="task-responsible">Responsable</label>
@@ -149,12 +186,20 @@
                         <option value="Quertain">Quertain</option>
                         <option value="Gabi">Gabi</option>
                         <option value="Artisan">Artisan</option>
+                        <option value="Autre">Autre</option>
                     </select>
                 </div>
 
+                <div class="form-group"><label for="task-estimatedCost">Coût Estimé (€)</label><input type="number" min="0" step="0.01" placeholder="Optionnel" id="task-estimatedCost" name="estimatedCost"></div>
+
                 <div class="form-group"><label for="task-taskDueDate">Échéance Tâche</label><input type="date" id="task-taskDueDate" name="taskDueDate"></div>
 
-                <button type="submit" id="add-task-btn" class="submit-btn task-btn">
+                <div class="form-group">
+                    <label for="task-materialsLink">Lien Matériaux/Référence</label>
+                    <input type="url" placeholder="URL ou Ref." id="task-materialsLink" name="materialsLink">
+                </div>
+
+                <button type="submit" id="add-task-btn" class="submit-btn task-btn" style="grid-column: 1 / -1;">
                     <i class="fas fa-check-double"></i> Ajouter la Tâche
                 </button>
             </form>
@@ -172,6 +217,7 @@
         <div id="tasks-container" class="task-list-grid">
         </div>
     </section>
+
 </main>
 
 <script src="app.js" defer></script>

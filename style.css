@@ -96,7 +96,7 @@ body {
 }
 
 
-/* --- Section Formulaire --- */
+/* --- Section Formulaire DÉPENSE --- */
 .form-section {
     background: white;
     padding: 30px;
@@ -336,7 +336,7 @@ body {
     margin-left: auto;
 }
 
-/* États spécifiques des cartes */
+/* États spécifiques des cartes de DÉPENSE */
 .expense-card.paid {
     border-left: 5px solid #28a745;
     opacity: 0.85;
@@ -419,7 +419,7 @@ body {
 
 
 /* ========================================================= */
-/* --- NOUVEAU: Styles pour la Gestion des Tâches (Task Management) --- */
+/* --- Styles pour la Gestion des Tâches (Task Management) --- */
 /* ========================================================= */
 .task-management {
     background: white;
@@ -431,13 +431,14 @@ body {
 
 .task-form-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto; /* Nom, Responsable, Échéance, Bouton */
+    /* 4 colonnes pour les 8 champs (sur 2 lignes) + 1 bouton (span 4) */
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     align-items: end;
 }
 
-.task-btn {
-    grid-column: span 1; /* Le bouton ne prend qu'une seule colonne */
+.task-form-grid .task-btn {
+    grid-column: 1 / -1; /* Prend toute la largeur sur la dernière ligne */
     padding: 12px;
 }
 
@@ -476,14 +477,23 @@ body {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    /* Personnalisation simple du checkbox */
     accent-color: #28a745;
+}
+
+.task-info label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .task-name {
     font-weight: 600;
     font-size: 1.1em;
     color: #333;
+    margin-right: 10px;
+}
+.task-location {
+    font-size: 0.9em;
     margin-right: 10px;
 }
 .task-responsible {
@@ -501,6 +511,21 @@ body {
     font-size: 0.9em;
     color: #1a73e8;
 }
+.task-cost {
+    font-weight: 700;
+    font-size: 0.9em;
+    color: #007bff; /* Bleu pour le coût estimé */
+}
+
+/* Indicateur d'avancement */
+.task-progress-indicator {
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #1a73e8;
+    background: #e6f0ff;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
 
 .delete-task-btn {
     background: transparent;
@@ -510,6 +535,17 @@ body {
 }
 .delete-task-btn:hover {
     background: #fae0e2;
+}
+
+/* NOUVEAU: Style du bouton de modification d'avancement */
+.action-btn.update-progress-btn {
+    background: #17a2b8; /* Couleur Cyan/Bleu secondaire */
+    color: white;
+    padding: 5px 8px;
+    font-size: 1.0em;
+}
+.action-btn.update-progress-btn:hover {
+    background: #138496;
 }
 
 /* États des tâches */
@@ -528,22 +564,29 @@ body {
     background: #fffafa;
 }
 
+/* Style pour le statut "Bloquée" */
+.task-card.task-priority-bloquée {
+    border-left: 4px solid #6c757d; /* Gris pour bloqué */
+    opacity: 0.9;
+}
+
 /* --- Réactivité (Mobile-First) --- */
 @media(max-width: 992px) {
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .task-form-grid {
-        grid-template-columns: 1fr 1fr; /* 2 colonnes */
-    }
-    .task-form-grid .form-group:nth-child(3) {
-        /* Déplace la date sur la même ligne que le bouton pour les petits écrans */
-        grid-column: 1 / span 1;
-    }
-    .task-form-grid .task-btn {
-        grid-column: 2 / span 1;
+        grid-template-columns: repeat(2, 1fr);
     }
 
+    .task-form-grid .form-group {
+        grid-column: span 1;
+    }
+
+    .task-form-grid .task-btn {
+        grid-column: 1 / -1;
+    }
 }
 
 @media(max-width: 600px) {
@@ -563,16 +606,14 @@ body {
         flex-direction: column;
     }
 
-    /* CORRECTION ICI : Adapter la grille des tâches pour mobile */
     .task-form-grid {
-        grid-template-columns: 1fr; /* Une seule colonne */
+        grid-template-columns: 1fr;
     }
-    .task-form-grid .form-group:nth-child(3),
-    .task-form-grid .task-btn {
-        grid-column: 1 / -1; /* S'assurer qu'ils sont sur une ligne complète */
+    .task-form-grid .task-btn,
+    .task-form-grid .form-group {
+        grid-column: 1 / -1;
     }
 
-    /* Adapter la carte de tâche pour mobile */
     .task-card {
         flex-direction: column;
         align-items: flex-start;
@@ -581,12 +622,17 @@ body {
     .task-meta {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
     .task-info label {
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
     }
     .task-responsible {
         margin-left: 0;
+    }
+    .task-due-date, .task-cost, .task-priority-badge, .task-progress-indicator {
+        flex-basis: auto;
     }
 }
