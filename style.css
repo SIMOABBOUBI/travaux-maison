@@ -1,22 +1,12 @@
 /* Import Inter Font */
 body {
     font-family: 'Inter', sans-serif;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Fond Doux et Animé */
-    background: linear-gradient(135deg, #e0f7fa, #f4f6fa);
-    background-size: 400% 400%; /* Permet l'animation */
-    animation: backgroundShift 20s ease infinite; /* Animation de fond subtile */
+    background: linear-gradient(135deg, #e0f7fa, #f4f6fa); /* Fond Doux et Lumineux */
     margin: 0;
     padding: 0;
-    color: #212529;
+    color: #212529; /* Noir plus profond */
     min-height: 100vh;
     transition: background 0.5s;
-}
-
-/* Keyframes pour l'animation de fond */
-@keyframes backgroundShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .container {
@@ -32,10 +22,9 @@ body {
     justify-content: space-between;
     padding: 20px 30px;
     background: rgba(255, 255, 255, 0.95);
+    /* EFFET MAGIQUE : Bords légers et transition */
     border-radius: 15px;
-    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Ombre complexe (Z-Depth) + Glassmorphism */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     margin-bottom: 30px;
     position: sticky;
     top: 0;
@@ -50,12 +39,10 @@ body {
     margin: 0;
     font-size: 1.9rem;
     letter-spacing: 1px;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Texte néon léger */
-    text-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
 }
 .app-header i:first-child {
     font-size: 1.8rem;
-    color: #4CAF50;
+    color: #4CAF50; /* Vert pour le contraste */
     z-index: 10;
 }
 .app-header a.nav-button {
@@ -74,8 +61,7 @@ body {
 .app-header a.nav-button:hover {
     background: #388E3C;
     transform: translateY(-2px);
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur verte */
-    box-shadow: 0 6px 10px rgba(76, 175, 80, 0.5), 0 0 15px rgba(76, 175, 80, 0.6);
+    box-shadow: 0 6px 10px rgba(76, 175, 80, 0.5);
 }
 
 /* --- Section Totaux (Dashboard) --- */
@@ -97,8 +83,7 @@ body {
 }
 .stat-card:hover {
     transform: translateY(-5px) scale(1.02);
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur blanche au survol */
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15), 0 0 20px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
 .stat-card p {
@@ -115,16 +100,8 @@ body {
     color: #212529;
 }
 
-.total-paid strong {
-    color: #28a745;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur de statut vert */
-    text-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-}
-.total-pending strong {
-    color: #DC3545;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur de statut rouge */
-    text-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
-}
+.total-paid strong { color: #28a745; }
+.total-pending strong { color: #DC3545; }
 
 /* Styles pour le Budget */
 .stat-card.category-card {
@@ -154,8 +131,8 @@ body {
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.05);
     margin-bottom: 30px;
-    /* EFFET MAGIQUE AMÉLIORÉ : Glassmorphism + Plus de blur */
-    backdrop-filter: blur(8px);
+    /* EFFET MAGIQUE : Glassmorphism sur l'arrière-plan */
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.7);
 }
 .form-section fieldset, .task-management fieldset {
@@ -206,8 +183,7 @@ body {
 
 .modern-form input:focus, .modern-form select:focus {
     border-color: #1A73E8;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Cercle lumineux bleu autour du focus */
-    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.25), 0 0 10px rgba(26, 115, 232, 0.4);
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.25);
     background: white;
     outline: none;
 }
@@ -228,8 +204,7 @@ body {
 .submit-btn:hover:not(:disabled) {
     background: #0d47a1;
     transform: translateY(-2px);
-    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur bleue intense */
-    box-shadow: 0 8px 15px rgba(26, 115, 232, 0.4), 0 0 20px rgba(26, 115, 232, 0.7);
+    box-shadow: 0 8px 15px rgba(26, 115, 232, 0.4);
 }
 .submit-btn:disabled {
     background: #bdbdbd;
@@ -262,7 +237,7 @@ body {
 }
 
 .progress-bar-bg {
-    background: #e3f2fd;
+    background: #e3f2fd; /* Bleu très pâle */
     border-radius: 10px;
     height: 25px;
     overflow: hidden;
@@ -271,36 +246,15 @@ body {
 
 .progress-bar {
     height: 100%;
-    /* EFFET MAGIQUE AMÉLIORÉ : Dégradé vibrant et animation de chargement */
+    /* EFFET MAGIQUE : Dégradé vibrant et animation de chargement */
     background: linear-gradient(90deg, #4CAF50, #8BC34A);
     transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     border-radius: 10px;
     position: relative;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Rayures animées pour l'illusion de mouvement */
-    background-size: 30px 30px;
-    background-image: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.15) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.15) 50%,
-        rgba(255, 255, 255, 0.15) 75%,
-        transparent 75%,
-        transparent
-    );
-    animation: moveStripes 2s linear infinite; /* Animation des rayures */
-}
-
-@keyframes moveStripes {
-    from { background-position: 0 0; }
-    to { background-position: 30px 0; }
 }
 
 .progress-bar.budget-alert {
     background: linear-gradient(90deg, #FF5722, #F44336);
-    /* Retirer l'animation de rayures sur le rouge pour un look plus "Alerte" */
-    background-image: none;
-    animation: none;
 }
 
 .progress-bar-container p, .progress-bar-container span {
@@ -345,6 +299,7 @@ body {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 18px;
     overflow: hidden;
+    /* EFFET MAGIQUE : Ombre flottante */
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(4px);
@@ -352,8 +307,7 @@ body {
 }
 
 .category-node:hover {
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur Bleue au survol du bloc entier */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 15px rgba(26, 115, 232, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* Style de l'En-tête de Catégorie (la barre cliquable) */
@@ -362,6 +316,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 22px 30px;
+    /* EFFET MAGIQUE : Dégradé plus profond */
     background: linear-gradient(90deg, #0D47A1, #1A73E8);
     color: white;
     cursor: pointer;
@@ -384,8 +339,8 @@ body {
     font-size: 1.6rem;
     font-weight: 900;
     font-family: 'Inter', sans-serif;
-    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur blanche intense */
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    /* EFFET MAGIQUE : Texte avec ombre légère */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Icône de bascule (flèche) */
@@ -437,8 +392,6 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     transform: scale(1.01);
     border-color: #1A73E8;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur subtile colorée au survol */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 8px rgba(26, 115, 232, 0.2);
 }
 
 .card-header {
@@ -494,39 +447,18 @@ body {
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Ombre + Lueur du badge */
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     transition: transform 0.2s;
-    position: relative;
-    overflow: hidden;
 }
 
 .status-badge:hover {
     transform: translateY(-1px);
 }
 
-.status-badge::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur intérieure subtile */
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8) inset;
-    pointer-events: none;
-}
-
 .status-acompte { background: #ff9800; }
 .status-total { background: #17a2b8; }
-.status-payé {
-    background: #28a745;
-    box-shadow: 0 3px 6px rgba(40, 167, 69, 0.5), 0 0 10px rgba(40, 167, 69, 0.8); /* Lueur Payé */
-}
-.status-en-attente {
-    background: #6c757d;
-    /* Amélioré : Utilisation de la couleur rouge pour la classe overdue, mais j'ai conservé le gris pour "en-attente" standard */
-}
+.status-payé { background: #28a745; }
+.status-en-attente { background: #6c757d; }
 .status-a-rembourser { background: #FFEB3B; color: #333; }
 .status-remboursé { background: #00BCD4; }
 .status-n\/a { background: #9E9E9E; }
@@ -564,14 +496,7 @@ body {
 }
 
 .pay-btn { background: #4CAF50; color: white; }
-.pay-btn:hover {
-    background: #388E3C;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 10px rgba(76, 175, 80, 0.6);
-    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur verte pour l'action */
-    outline: 2px solid rgba(76, 175, 80, 0.5);
-    outline-offset: 1px;
-}
+.pay-btn:hover { background: #388E3C; transform: translateY(-1px); box-shadow: 0 5px 10px rgba(76, 175, 80, 0.6); }
 
 .postpone-btn { background: #FFC107; color: #333; }
 .postpone-btn:hover { background: #FFA000; transform: translateY(-1px); box-shadow: 0 5px 10px rgba(255, 193, 7, 0.6); }
@@ -592,10 +517,9 @@ body {
 
 .expense-card.overdue {
     border: 3px solid #DC3545;
-    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur rouge animée sur la carte */
     box-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
     background: #ffeded;
-    animation: pulse-border 1.5s infinite alternate, neon-red-glow 1.5s infinite alternate;
+    animation: pulse-border 1.5s infinite alternate;
 }
 
 /* Animation de pulsation pour les cartes en retard */
@@ -606,11 +530,6 @@ body {
     to {
         box-shadow: 0 0 20px rgba(220, 53, 69, 0.6);
     }
-}
-/* ✨ EFFET MAGIQUE NOUVEAU : Animation NEON pour le texte en alerte */
-@keyframes neon-red-glow {
-    from { text-shadow: 0 0 5px #ff8a80; }
-    to { text-shadow: 0 0 10px #ff0000; }
 }
 
 
@@ -653,6 +572,7 @@ body {
 
 /* ========================================================= */
 /* --- Styles pour la Gestion des Tâches (Task Management) --- */
+/* (Réappliqué pour la complétude) */
 /* ========================================================= */
 
 .task-management {
@@ -661,12 +581,10 @@ body {
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.05);
     margin-bottom: 30px;
-    /* EFFET MAGIQUE AMÉLIORÉ : Glassmorphism */
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-/* ... (Reste des styles de Task Management non modifiés) ... */
 .task-form-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -703,8 +621,7 @@ body {
 }
 .task-card:hover {
     transform: translateY(-2px);
-    /* ✨ EFFET MAGIQUE NOUVEAU : Légère lueur */
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1), 0 0 5px rgba(23, 162, 184, 0.2);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 
 .task-info {
@@ -826,11 +743,9 @@ body {
 
 /* ========================================================= */
 /* --- Réactivité (CORRECTION MOBILE) --- */
-/* (Toutes vos corrections de Media Query sont conservées) */
 /* ========================================================= */
 
 @media(max-width: 992px) {
-    /* ... (code non modifié pour les tablettes) ... */
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -849,7 +764,6 @@ body {
 }
 
 @media(max-width: 600px) {
-    /* ... (code non modifié pour les mobiles) ... */
     .container {
         padding: 10px;
     }
@@ -870,8 +784,6 @@ body {
         order: 2;
         flex-grow: 1;
         text-align: center;
-        /* Désactiver les effets néon/lueur sur mobile pour la lisibilité */
-        text-shadow: none;
     }
     .app-header i:first-child {
         font-size: 1.2rem;
@@ -888,10 +800,6 @@ body {
     .dashboard-totals {
         grid-template-columns: 1fr;
         gap: 15px;
-    }
-    .stat-card:hover {
-        /* Désactiver le scale sur mobile */
-        transform: none;
     }
     .modern-form, .task-form-grid {
         grid-template-columns: 1fr;
@@ -925,7 +833,6 @@ body {
     .category-header span {
         font-size: 1.2rem;
         order: 2;
-        text-shadow: none; /* Désactiver la lueur sur mobile */
     }
     .category-header i.toggle-icon {
         position: absolute;
@@ -969,11 +876,6 @@ body {
     .action-btn {
         min-width: 100%;
         padding: 10px;
-    }
-
-    .expense-card.overdue {
-        /* Désactiver les animations coûteuses sur mobile */
-        animation: none;
     }
 
     /* CORRECTION TOAST */
