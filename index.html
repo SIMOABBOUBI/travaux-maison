@@ -7,14 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
 <header class="app-header">
-    <i class="fas fa-home"></i>
-    <h1>Suivi Financier : Travaux Maison Musson</h1>
+    <i class="fas fa-euro-sign"></i>
+    <h1>BUDGET & DÉPENSES</h1>
     <a href="tasks.html" class="nav-button">
         <i class="fas fa-hard-hat"></i> Tâches Travaux
     </a>
@@ -31,6 +35,8 @@
         <div id="progress-tracker" class="progress-bar-container">
             <p>0% Atteint</p>
             <span>Total Dépensé: 0 €</span>
+            <span id="total-budget-tracker" class="budget-cible-tracker">Budget Cible: 0 €</span>
+
             <div class="progress-bar-bg">
                 <div id="overall-progress" class="progress-bar" style="width: 0;"></div>
             </div>
@@ -93,7 +99,7 @@
                         <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
                         <option value="Maman">Maman</option>
-                        <option value="Corentin">Corentin</option>
+                        <option value="Quertain">Quertain</option>
                         <option value="Gabi">Gabi</option>
                         <option value="Autre">Autre</option>
                     </select>
@@ -127,8 +133,14 @@
     </section>
 
     <section class="list-section">
-        <h2>Dépenses Enregistrées</h2>
-        <div id="cards-container" class="expense-grid">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Dépenses Enregistrées</h2>
+            <button id="export-pdf-btn" class="submit-btn" style="width: auto; padding: 10px 15px; margin: 0; background: #dc3545;">
+                <i class="fas fa-file-pdf"></i> Exporter en PDF
+            </button>
+        </div>
+
+        <div id="cards-container" class="expense-tree-container">
         </div>
     </section>
 

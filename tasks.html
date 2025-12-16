@@ -2,11 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion des Tâches Travaux</title>
+    <title>Tâches Travaux</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
+
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -14,7 +15,7 @@
 
 <header class="app-header">
     <i class="fas fa-hard-hat"></i>
-    <h1>TÂCHES DE TRAVAUX</h1>
+    <h1>GESTION DES TÂCHES</h1>
     <a href="index.html" class="nav-button">
         <i class="fas fa-euro-sign"></i> Budget & Dépenses
     </a>
@@ -24,88 +25,63 @@
 
     <div id="toast-container"></div>
 
-    <section class="task-management">
-
-        <fieldset>
-            <legend>Ajouter une Tâche de Travaux</legend>
-            <form id="task-form" class="modern-form task-form-grid">
-
-                <div class="form-group">
-                    <label for="task-location">Pièce/Localisation</label>
-                    <select id="task-location" name="location" required>
-                        <option value="" selected disabled>Choisir la pièce</option>
-                        <option value="Cuisine">Cuisine</option>
-                        <option value="Salon">Salon</option>
-                        <option value="SDB RDC">SDB RDC</option>
-                        <option value="Chambre 1">Chambre 1</option>
-                        <option value="Extérieur">Extérieur</option>
-                        <option value="Combles">Combles</option>
-                        <option value="Divers">Divers</option>
-                    </select>
-                </div>
-
-                <div class="form-group"><label for="task-name">Nom de la Tâche</label><input placeholder="Ex: Peinture Salon" id="task-name" name="name" required></div>
-
-                <div class="form-group">
-                    <label for="task-priority">Priorité</label>
-                    <select id="task-priority" name="priority" required>
-                        <option value="Moyenne" selected>Moyenne</option>
-                        <option value="Haute">Haute</option>
-                        <option value="Basse">Basse</option>
-                        <option value="Bloquée">Bloquée</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="task-progress">Avancement (%)</label>
-                    <select id="task-progress" name="progress" required>
-                        <option value="0" selected>0% (À faire)</option>
-                        <option value="25">25% (Démarrée)</option>
-                        <option value="50">50% (En cours)</option>
-                        <option value="75">75% (Finitions)</option>
-                        <option value="100">100% (Terminée)</option>
-                    </select>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="task-responsible">Responsable</label>
-                    <select id="task-responsible" name="responsible" required>
-                        <option value="Kimberley" selected>Kimberley</option>
-                        <option value="Simo">Simo</option>
-                        <option value="Tony">Tony</option>
-                        <option value="Maman">Maman</option>
-                        <option value="Corentin">Corentin</option>
-                        <option value="Gabi">Gabi</option>
-                        <option value="Artisan">Artisan</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-
-                <div class="form-group"><label for="task-estimatedCost">Coût Estimé (€)</label><input type="number" min="0" step="0.01" placeholder="Optionnel" id="task-estimatedCost" name="estimatedCost"></div>
-
-                <div class="form-group"><label for="task-taskDueDate">Échéance Tâche</label><input type="date" id="task-taskDueDate" name="taskDueDate"></div>
-
-                <div class="form-group">
-                    <label for="task-materialsLink">Lien Matériaux/Référence</label>
-                    <input type="url" placeholder="URL ou Ref." id="task-materialsLink" name="materialsLink">
-                </div>
-
-                <button type="submit" id="add-task-btn" class="submit-btn task-btn" style="grid-column: 1 / -1;">
-                    <i class="fas fa-check-double"></i> Ajouter la Tâche
-                </button>
-            </form>
-        </fieldset>
-
-        <h2 style="margin-top: 30px;">Avancement Physique des Travaux</h2>
+    <section class="project-tracker">
+        <div class="tracker-header">
+            <h2>Avancement Global des Tâches</h2>
+        </div>
 
         <div class="progress-bar-container">
             <p id="overall-task-progress">0% (0 / 0 Tâches Terminées)</p>
+            <span>Progression basée sur le nombre de tâches complétées.</span>
+
             <div class="progress-bar-bg">
                 <div id="task-progress-bar" class="progress-bar task-progress" style="width: 0;"></div>
             </div>
         </div>
+    </section>
 
+    <section class="form-section task-management">
+        <fieldset>
+            <legend>Ajouter une Nouvelle Tâche</legend>
+            <form id="task-form" class="modern-form task-form-grid">
+
+                <div class="form-group"><label for="task-location">Localisation</label><input placeholder="Cuisine, Salon, SDB..." id="task-location" name="location" required></div>
+                <div class="form-group"><label for="task-name">Nom de la Tâche</label><input placeholder="Ex: Pose du carrelage" id="task-name" name="name" required></div>
+
+                <div class="form-group">
+                    <label for="task-priority">Priorité / Statut</label>
+                    <select id="task-priority" name="priority">
+                        <option value="Basse">Basse</option>
+                        <option value="Moyenne" selected>Moyenne</option>
+                        <option value="Haute">Haute</option>
+                        <option value="Bloquée">Bloquée</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-responsible">Responsable</label>
+                    <select id="task-responsible" name="responsible">
+                        <option value="Kimberley" selected>Kimberley</option>
+                        <option value="Simo">Simo</option>
+                        <option value="Tony">Tony</option>
+                        <option value="Externe">Externe</option>
+                    </select>
+                </div>
+
+                <div class="form-group"><label for="task-taskDueDate">Date d'Échéance</label><input type="date" id="task-taskDueDate" name="taskDueDate"></div>
+                <div class="form-group"><label for="task-estimatedCost">Coût Estimé (€)</label><input type="number" min="0" step="1" placeholder="Ex: 500" id="task-estimatedCost" name="estimatedCost"></div>
+
+                <div class="form-group"><label for="task-progress">Avancement (%)</label><input type="number" min="0" max="100" step="1" placeholder="0 à 100" id="task-progress" name="progress" value="0"></div>
+                <div class="form-group"><label for="task-materialsLink">Lien Matériaux/Doc</label><input type="url" placeholder="Lien vers un site/fichier" id="task-materialsLink" name="materialsLink"></div>
+
+                <button type="submit" id="add-task-btn" class="submit-btn task-btn">
+                    <i class="fas fa-check-double"></i> Ajouter la Tâche
+                </button>
+            </form>
+        </fieldset>
+    </section>
+
+    <section class="list-section">
+        <h2>Liste des Tâches en Cours</h2>
         <div id="tasks-container" class="task-list-grid">
         </div>
     </section>

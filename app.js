@@ -14,7 +14,11 @@ const firebaseConfig = {
     measurementId: "G-7NVN7W9HXX"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialisation de Firebase
+// Assurez-vous d'avoir inclus les scripts Firebase dans votre HTML
+if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 const expensesRef = db.collection("expenses");
 const tasksRef = db.collection("tasks");
@@ -23,6 +27,8 @@ const tasksRef = db.collection("tasks");
 const isExpensePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
 const isTaskPage = window.location.pathname.includes('tasks.html');
 
+// Variable globale pour stocker les données de dépenses (pour le PDF)
+let allExpensesData = [];
 
 // =========================================================
 // 🧩 DOM Cache & Utilitaires (Communs)
@@ -39,6 +45,7 @@ const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', {
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
+        // Ajout de 'T00:00:00' pour gérer les différences de fuseau horaire
         return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
@@ -64,12 +71,13 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
+
 // =========================================================
 // 💸 LOGIQUE DÉPENSES (Si nous sommes sur index.html)
 // =========================================================
 
 if (isExpensePage) {
-    const BUDGET_CIBLE = { "Outillage": 5000, "Prestations": 20000, "Grosses dépenses": 15000, "Total": 94000 };
+    const BUDGET_CIBLE = { "Outillage": 10000, "Prestations": 24000, "Grosses dépenses": 60000, "Total": 94000 };
 
     // Cache des Totaux et des Conteneurs
     const outillageTotal = document.getElementById("outillage");
@@ -80,6 +88,8 @@ if (isExpensePage) {
     const cardsContainer = document.getElementById("cards-container");
     const overallProgress = document.getElementById("overall-progress");
     const progressTracker = document.getElementById("progress-tracker");
+    const totalBudgetTracker = document.getElementById("total-budget-tracker");
+    const exportPdfBtn = document.getElementById("export-pdf-btn");
 
     // Éléments Formulaire
     const expenseForm = document.getElementById("expense-form");
@@ -96,13 +106,16 @@ if (isExpensePage) {
         document.getElementById("prestations-budget").textContent = formatCurrency(BUDGET_CIBLE.Prestations);
         document.getElementById("grosses-budget").textContent = formatCurrency(BUDGET_CIBLE["Grosses dépenses"]);
         document.getElementById("total-budget").textContent = formatCurrency(BUDGET_CIBLE.Total);
+
+        if (totalBudgetTracker) {
+            totalBudgetTracker.textContent = `Budget Cible: ${formatCurrency(BUDGET_CIBLE.Total)}`;
+        }
     });
 
     // Soumission du formulaire
     expenseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Récupérer les données du formulaire
         const formData = new FormData(expenseForm);
         const data = Object.fromEntries(formData.entries());
         data.amount = Number(data.amount);
@@ -117,7 +130,6 @@ if (isExpensePage) {
         try {
             await expensesRef.add(data);
 
-            // Réinitialisation
             expenseForm.reset();
             document.getElementById("status").value = 'Payé';
             document.getElementById("date").value = new Date().toISOString().split('T')[0];
@@ -138,7 +150,15 @@ if (isExpensePage) {
         let totalPaidAmount = 0;
         let totalPendingAmount = 0;
         const today = new Date().toISOString().split('T')[0];
+
+        let groupedExpenses = {
+            "Grosses dépenses": [], // Mis en premier pour l'ordre d'affichage
+            "Prestations": [],
+            "Outillage": []
+        };
+
         cardsContainer.innerHTML = '';
+        allExpensesData = [];
 
         snapshot.forEach(doc => {
             const e = doc.data();
@@ -154,6 +174,7 @@ if (isExpensePage) {
             totals[e.type] = (totals[e.type] || 0) + amount;
             isPaid ? (totalPaidAmount += amount) : (totalPendingAmount += amount);
 
+            // --- Construction des données pour la carte HTML ---
             const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
             const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-').replace('/', '');
 
@@ -187,7 +208,57 @@ if (isExpensePage) {
                     </div>
                 </div>
             `;
-            cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
+            // Ajout à la structure groupée
+            if (groupedExpenses[e.type]) {
+                groupedExpenses[e.type].push(cardHTML);
+            }
+
+            // Enregistrement des données pour l'export PDF
+            allExpensesData.push({
+                date: formatDate(e.date),
+                type: e.type,
+                category: e.category,
+                description: e.description,
+                recipient: e.recipient,
+                amount: e.amount,
+                paidBy: e.paidBy,
+                status: e.status,
+                reimbursementStatus: e.reimbursementStatus,
+                dueDate: formatDate(e.dueDate)
+            });
+        });
+
+        // --- Génération de la vue Arborescence ---
+        let treeHTML = '';
+        const categoriesOrder = ["Grosses dépenses", "Prestations", "Outillage"]; // Ordre d'affichage
+
+        categoriesOrder.forEach(category => {
+            const expenses = groupedExpenses[category];
+            const categoryTotal = totals[category];
+
+            if (expenses && expenses.length > 0) {
+                treeHTML += `
+                    <div class="category-node" data-category="${category.replace(' ', '-')}" id="node-${category.replace(' ', '-')}" ${category === "Grosses dépenses" ? 'class="category-node open"' : ''}>
+                        <div class="category-header">
+                            <h3><i class="fas fa-chevron-right toggle-icon"></i> ${category} (${expenses.length} dépense${expenses.length > 1 ? 's' : ''})</h3>
+                            <span>${formatCurrency(categoryTotal)}</span>
+                        </div>
+                        <div class="category-content">
+                            ${expenses.join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        cardsContainer.innerHTML = treeHTML;
+
+        // --- Logique d'ouverture/fermeture (Toggle) ---
+        document.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const node = header.closest('.category-node');
+                node.classList.toggle('open');
+            });
         });
 
         // Mise à jour des totaux et de la barre de progression
@@ -206,13 +277,7 @@ if (isExpensePage) {
 
         overallProgress.style.width = `${clampedProgress}%`;
         progressTracker.querySelector('p').textContent = progressText;
-        progressTracker.querySelector('span').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
-
-        if (progressPercentage > 100) {
-            overallProgress.classList.add('budget-alert');
-        } else {
-            overallProgress.classList.remove('budget-alert');
-        }
+        progressTracker.querySelector('span:first-of-type').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
     });
 
     // Fonctions CRUD des Dépenses (rendues globales pour les onclick)
@@ -261,6 +326,90 @@ if (isExpensePage) {
         } else if (newDate) {
             showToast("Format de date invalide. Utilisez YYYY-MM-DD.", 'error');
         }
+    }
+
+    // =========================================================
+    // 🖨️ FONCTION D'EXPORTATION PDF
+    // =========================================================
+
+    function exportExpensesToPDF() {
+        if (!allExpensesData || allExpensesData.length === 0) {
+            showToast("Aucune dépense à exporter.", 'info');
+            return;
+        }
+
+        try {
+            // S'assurer que les bibliothèques sont chargées
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                 throw new Error("jsPDF library is not loaded.");
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            // 1. Préparation des données pour autoTable
+            const headers = [
+                ['Date', 'Type', 'Catégorie', 'Description', 'Montant (€)', 'Payé par', 'Statut', 'Remb.', 'Échéance']
+            ];
+
+            let totalSpent = 0;
+            const body = allExpensesData.map(e => {
+                totalSpent += e.amount;
+                return [
+                    e.date,
+                    e.type,
+                    e.category,
+                    e.description.length > 30 ? e.description.substring(0, 27) + '...' : e.description,
+                    formatCurrency(e.amount),
+                    e.paidBy,
+                    e.status,
+                    e.reimbursementStatus,
+                    e.dueDate
+                ];
+            });
+
+            // 2. Ajout du titre
+            doc.setFontSize(18);
+            doc.text("Rapport de Suivi des Dépenses Travaux", 14, 20);
+
+            // 3. Ajout des totaux
+            doc.setFontSize(10);
+            doc.text(`Total Dépensé: ${formatCurrency(totalSpent)}`, 14, 28);
+            doc.text(`Date de Génération: ${formatDate(new Date().toISOString().split('T')[0])}`, 14, 34);
+
+            // 4. Génération du tableau avec autoTable
+            doc.autoTable({
+                head: headers,
+                body: body,
+                startY: 40,
+                theme: 'striped',
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: [26, 115, 232]
+                },
+                columnStyles: {
+                    4: { cellWidth: 20 },
+                    8: { cellWidth: 20 }
+                }
+            });
+
+            // 5. Enregistrement du fichier
+            doc.save(`Rapport_Depenses_Travaux_${new Date().toISOString().split('T')[0]}.pdf`);
+            showToast("Fichier PDF généré avec succès !", 'success');
+
+        } catch (e) {
+            console.error("Erreur lors de la génération du PDF:", e);
+            showToast("Impossible de générer le PDF. Vérifiez la console et les liens jsPDF.", 'error');
+        }
+    }
+
+    // Événement du bouton d'exportation PDF
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', exportExpensesToPDF);
     }
 }
 
@@ -409,8 +558,10 @@ if (isTaskPage) {
     function updateTaskProgress(totalTasks, completedTasks) {
         const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        overallTaskProgressText.textContent = `${percentage}% (${completedTasks} / ${totalTasks} Tâches Terminées)`;
-        taskProgressBar.style.width = `${percentage}%`;
+        if (overallTaskProgressText && taskProgressBar) {
+            overallTaskProgressText.textContent = `${percentage}% (${completedTasks} / ${totalTasks} Tâches Terminées)`;
+            taskProgressBar.style.width = `${percentage}%`;
+        }
     }
 
     window.promptUpdateTaskProgress = async (id, currentProgress) => {

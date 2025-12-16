@@ -1,100 +1,134 @@
 /* Import Inter Font */
 body {
     font-family: 'Inter', sans-serif;
-    background: #f0f4f8; /* Arrière-plan très clair */
+    /* ✨ EFFET MAGIQUE NOUVEAU : Fond Doux et Animé */
+    background: linear-gradient(135deg, #e0f7fa, #f4f6fa);
+    background-size: 400% 400%; /* Permet l'animation */
+    animation: backgroundShift 20s ease infinite; /* Animation de fond subtile */
     margin: 0;
     padding: 0;
-    color: #333;
+    color: #212529;
     min-height: 100vh;
+    transition: background 0.5s;
+}
+
+/* Keyframes pour l'animation de fond */
+@keyframes backgroundShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 25px;
 }
 
 /* --- En-tête de l'application & Navigation --- */
 .app-header {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Pour placer le bouton à droite */
-    padding: 20px; /* Augmenter le padding pour inclure le bouton */
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Ombre complexe (Z-Depth) + Glassmorphism */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 2px rgba(255, 255, 255, 0.8) inset;
+    backdrop-filter: blur(5px);
+    margin-bottom: 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 .app-header h1 {
-    /* Centrer le titre */
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-weight: 800;
-    color: #1a73e8; /* Bleu moderne */
+    font-weight: 900;
+    color: #1A73E8;
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 1.9rem;
+    letter-spacing: 1px;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Texte néon léger */
+    text-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
 }
 .app-header i:first-child {
     font-size: 1.8rem;
-    color: #1a73e8;
+    color: #4CAF50;
     z-index: 10;
 }
 .app-header a.nav-button {
     font-size: 0.9em;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     color: white;
-    background: #4CAF50; /* Vert pour attirer l'attention */
-    padding: 8px 15px;
-    border-radius: 6px;
-    transition: background 0.3s;
+    background: #4CAF50;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.4);
     white-space: nowrap;
     z-index: 10;
 }
 .app-header a.nav-button:hover {
-    background: #3e8e41;
+    background: #388E3C;
+    transform: translateY(-2px);
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur verte */
+    box-shadow: 0 6px 10px rgba(76, 175, 80, 0.5), 0 0 15px rgba(76, 175, 80, 0.6);
 }
 
 /* --- Section Totaux (Dashboard) --- */
 .dashboard-totals {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
 }
 
 .stat-card {
-    padding: 20px;
-    border-radius: 12px;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombre douce */
-    transition: transform 0.3s;
-    border: 1px solid #eee;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    /* EFFET MAGIQUE : Ombre 3D et bordure dynamique */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 .stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    transform: translateY(-5px) scale(1.02);
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur blanche au survol */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15), 0 0 20px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
 .stat-card p {
     margin: 0 0 5px 0;
-    font-size: 14px;
-    color: #666;
+    font-size: 15px;
+    color: #555;
+    font-weight: 500;
 }
 
 .stat-card strong {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
     display: block;
-    color: #333;
+    color: #212529;
 }
 
-.total-paid strong { color: #28a745; }
-.total-pending strong { color: #dc3545; }
+.total-paid strong {
+    color: #28a745;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur de statut vert */
+    text-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+.total-pending strong {
+    color: #DC3545;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur de statut rouge */
+    text-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+}
 
 /* Styles pour le Budget */
 .stat-card.category-card {
-    border-top: 5px solid #1a73e8;
+    border-top: 5px solid #1A73E8;
     border-left: none;
 }
 
@@ -103,23 +137,26 @@ body {
     font-size: 0.9em;
     font-weight: 600;
     color: #666;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 5px;
+    border-top: 1px dashed #eee;
+    padding-top: 8px;
 }
 
 .budget-target span {
-    font-weight: 700;
-    color: #1a73e8;
+    font-weight: 800;
+    color: #1A73E8;
 }
 
 
-/* --- Section Formulaires (DÉPENSE et TÂCHES) --- */
+/* --- Section Formulaires --- */
 .form-section, .task-management {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
     margin-bottom: 30px;
+    /* EFFET MAGIQUE AMÉLIORÉ : Glassmorphism + Plus de blur */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 .form-section fieldset, .task-management fieldset {
     border: none;
@@ -127,14 +164,16 @@ body {
     margin: 0;
 }
 .form-section legend, .task-management legend {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #1a73e8;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1A73E8;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
 }
 
 .modern-form {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     display: grid;
     gap: 20px;
 }
@@ -143,285 +182,463 @@ body {
     align-items: end;
 }
 
+
 .form-group {
     display: flex;
     flex-direction: column;
 }
 
 .modern-form label {
-    font-weight: 600;
-    margin-bottom: 5px;
+    font-weight: 700;
+    margin-bottom: 8px;
     font-size: 0.9em;
-    color: #555;
+    color: #333;
 }
 
 .modern-form input, .modern-form select {
-    padding: 12px 15px;
-    border-radius: 8px;
+    padding: 14px 18px;
+    border-radius: 10px;
     border: 1px solid #ddd;
-    font-size: 15px;
+    font-size: 16px;
     background: #fcfcfc;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.3s;
 }
 
 .modern-form input:focus, .modern-form select:focus {
-    border-color: #1a73e8;
-    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    border-color: #1A73E8;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Cercle lumineux bleu autour du focus */
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.25), 0 0 10px rgba(26, 115, 232, 0.4);
+    background: white;
     outline: none;
 }
 
 .submit-btn {
     grid-column: 1 / -1;
-    padding: 15px;
-    background: #1a73e8;
+    padding: 16px;
+    background: #1A73E8;
     color: white;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     border: none;
-    border-radius: 8px;
-    transition: 0.3s;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    letter-spacing: 0.5px;
 }
 
 .submit-btn:hover:not(:disabled) {
     background: #0d47a1;
+    transform: translateY(-2px);
+    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur bleue intense */
+    box-shadow: 0 8px 15px rgba(26, 115, 232, 0.4), 0 0 20px rgba(26, 115, 232, 0.7);
 }
 .submit-btn:disabled {
-    background: #90a4ae;
+    background: #bdbdbd;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 
 /* --- Section de Suivi de Projet (Progression Budget) --- */
 .project-tracker {
-    background: white;
-    padding: 25px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
     margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-.tracker-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
 .tracker-header h2 {
-    font-size: 1.5rem;
-    color: #1a73e8;
+    font-size: 1.6rem;
+    color: #1A73E8;
     margin: 0;
-}
-.tracker-header p {
-    font-weight: 600;
-    color: #555;
-    margin: 0;
+    font-weight: 800;
 }
 
 .progress-bar-container {
     width: 100%;
-    margin-top: 15px;
-    padding: 10px 0;
-    border-top: 1px solid #eee;
-}
-
-.progress-bar-container p, .progress-bar-container span {
-    display: block;
-    font-size: 1em;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-.progress-bar-container span {
-    font-weight: 400;
-    font-size: 0.9em;
-    color: #777;
+    margin-top: 20px;
+    padding: 15px 0;
 }
 
 .progress-bar-bg {
-    background: #e0e0e0;
-    border-radius: 5px;
-    height: 20px;
+    background: #e3f2fd;
+    border-radius: 10px;
+    height: 25px;
     overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .progress-bar {
     height: 100%;
+    /* EFFET MAGIQUE AMÉLIORÉ : Dégradé vibrant et animation de chargement */
     background: linear-gradient(90deg, #4CAF50, #8BC34A);
-    transition: width 0.5s ease-in-out;
+    transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 10px;
+    position: relative;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Rayures animées pour l'illusion de mouvement */
+    background-size: 30px 30px;
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    animation: moveStripes 2s linear infinite; /* Animation des rayures */
+}
+
+@keyframes moveStripes {
+    from { background-position: 0 0; }
+    to { background-position: 30px 0; }
 }
 
 .progress-bar.budget-alert {
     background: linear-gradient(90deg, #FF5722, #F44336);
+    /* Retirer l'animation de rayures sur le rouge pour un look plus "Alerte" */
+    background-image: none;
+    animation: none;
+}
+
+.progress-bar-container p, .progress-bar-container span {
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+.progress-bar-container span {
+    font-weight: 500;
+    font-size: 0.95em;
+    color: #777;
+}
+
+.budget-cible-tracker {
+    font-weight: 800 !important;
+    color: #1A73E8 !important;
+    font-size: 1.1em !important;
 }
 
 
 /* --- Section Liste des Dépenses --- */
 .list-section h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #333;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    color: #212529;
 }
 
-.expense-grid {
+
+/* ========================================================= */
+/* --- 1. VUE ARBORESCENCE "MAGIQUE" (Nœuds de Catégorie) --- */
+/* ========================================================= */
+
+.expense-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Style du Nœud de Catégorie (conteneur) */
+.category-node {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s;
+}
+
+.category-node:hover {
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur Bleue au survol du bloc entier */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 15px rgba(26, 115, 232, 0.3);
+}
+
+/* Style de l'En-tête de Catégorie (la barre cliquable) */
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 30px;
+    background: linear-gradient(90deg, #0D47A1, #1A73E8);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.category-header:hover {
+    background: linear-gradient(90deg, #093c8d, #1a73e8);
+    transform: scale(1.005);
+}
+
+.category-header h3 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.category-header span {
+    font-size: 1.6rem;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur blanche intense */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Icône de bascule (flèche) */
+.category-header i.toggle-icon {
+    margin-right: 15px;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.category-node.open .category-header i.toggle-icon {
+    transform: rotate(90deg);
+}
+
+/* Conteneur des dépenses de la catégorie (Corps dépliable) */
+.category-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
+    gap: 30px;
+    padding: 30px;
+    transition: max-height 0.6s ease-in-out, opacity 0.5s;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    background: #f8faff;
 }
+
+.category-node.open .category-content {
+    max-height: 5000px;
+    opacity: 1;
+}
+
+
+/* ========================================================= */
+/* --- 2. CARTES DE DÉPENSE (Micro-interactivité) --- */
+/* ========================================================= */
 
 .expense-card {
     background: white;
-    padding: 20px;
+    padding: 22px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
 }
 
 .expense-card:hover {
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transform: scale(1.01);
+    border-color: #1A73E8;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur subtile colorée au survol */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 8px rgba(26, 115, 232, 0.2);
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #f0f0f0;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 2px dotted #f0f4f8;
+    margin-bottom: 15px;
 }
 
 .card-type {
-    font-weight: 600;
-    color: #1a73e8;
+    font-weight: 800;
+    color: #4CAF50;
+    font-size: 1em;
+    letter-spacing: 0.3px;
 }
 
 .card-amount {
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-left: 15px;
 }
-.pending-amount { color: #dc3545; }
+.pending-amount { color: #DC3545; }
 .paid-amount { color: #28a745; }
 
 .card-details p {
-    margin: 4px 0;
-    font-size: 0.9em;
-    color: #555;
+    margin: 7px 0;
+    font-size: 0.95em;
+    color: #444;
+}
+.card-details strong {
+    color: #212529;
 }
 
+
+/* --- Badges de Statut (Puces modernes) --- */
 .card-footer {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
+    gap: 12px;
+    margin-top: 15px;
+    padding-top: 15px;
     border-top: 1px solid #f0f0f0;
 }
 
-/* Badges de Statut (Fournisseur) */
 .status-badge {
-    padding: 5px 10px;
+    padding: 8px 15px;
     border-radius: 20px;
     font-size: 0.8em;
-    font-weight: 600;
+    font-weight: 700;
     color: white;
     text-transform: uppercase;
-    white-space: nowrap;
+    letter-spacing: 0.8px;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Ombre + Lueur du badge */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    position: relative;
+    overflow: hidden;
 }
+
+.status-badge:hover {
+    transform: translateY(-1px);
+}
+
+.status-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur intérieure subtile */
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8) inset;
+    pointer-events: none;
+}
+
 .status-acompte { background: #ff9800; }
 .status-total { background: #17a2b8; }
-.status-payé { background: #28a745; }
-.status-en-attente { background: #6c757d; }
-.status-inconnu { background: #777; opacity: 0.7; }
-
-/* Styles pour le statut de Remboursement */
-.status-badge.status-a-rembourser {
-    background: #ffc107;
-    color: #333;
+.status-payé {
+    background: #28a745;
+    box-shadow: 0 3px 6px rgba(40, 167, 69, 0.5), 0 0 10px rgba(40, 167, 69, 0.8); /* Lueur Payé */
 }
-.status-badge.status-remboursé {
-    background: #17a2b8;
-}
-.status-badge.status-n\/a {
+.status-en-attente {
     background: #6c757d;
-    opacity: 0.8;
+    /* Amélioré : Utilisation de la couleur rouge pour la classe overdue, mais j'ai conservé le gris pour "en-attente" standard */
 }
-
+.status-a-rembourser { background: #FFEB3B; color: #333; }
+.status-remboursé { background: #00BCD4; }
+.status-n\/a { background: #9E9E9E; }
 
 .due-date {
-    font-size: 0.8em;
-    color: #777;
+    font-size: 0.9em;
+    color: #1A73E8;
     margin-left: auto;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
 }
 
-/* États spécifiques des cartes de DÉPENSE */
-.expense-card.paid {
-    border-left: 5px solid #28a745;
-    opacity: 0.85;
-}
-
-.expense-card.overdue {
-    border: 2px solid #dc3545;
-    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
-}
-
-/* --- Actions de la carte --- */
+/* --- Actions de la carte (Boutons réactifs) --- */
 .expense-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 15px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px dashed #f0f4f8;
 }
 
 .action-btn {
-    padding: 8px 12px;
+    padding: 12px 18px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    font-size: 0.85em;
-    font-weight: 600;
-    transition: background 0.2s, color 0.2s;
+    font-size: 0.95em;
+    font-weight: 700;
+    transition: all 0.3s;
     flex-grow: 1;
+    min-width: 140px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
-.pay-btn { background: #28a745; color: white; }
-.pay-btn:hover { background: #1e7e34; }
-.postpone-btn { background: #ffc107; color: #333; }
-.postpone-btn:hover { background: #e0a800; }
-.delete-btn { background: #dc3545; color: white; }
-.delete-btn:hover { background: #c82333; }
-.reimburse-btn {
-    background: #4CAF50;
-    color: white;
-}
-.reimburse-btn:hover {
-    background: #3e8e41;
+.pay-btn { background: #4CAF50; color: white; }
+.pay-btn:hover {
+    background: #388E3C;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(76, 175, 80, 0.6);
+    /* ✨ EFFET MAGIQUE NOUVEAU : Lueur verte pour l'action */
+    outline: 2px solid rgba(76, 175, 80, 0.5);
+    outline-offset: 1px;
 }
 
-/* --- Toast Notifications (UX Moderne) --- */
+.postpone-btn { background: #FFC107; color: #333; }
+.postpone-btn:hover { background: #FFA000; transform: translateY(-1px); box-shadow: 0 5px 10px rgba(255, 193, 7, 0.6); }
+
+.delete-btn { background: #DC3545; color: white; }
+.delete-btn:hover { background: #C82333; transform: translateY(-1px); box-shadow: 0 5px 10px rgba(220, 53, 69, 0.6); }
+
+.reimburse-btn { background: #00BCD4; color: white; }
+.reimburse-btn:hover { background: #0097A7; transform: translateY(-1px); box-shadow: 0 5px 10px rgba(0, 188, 212, 0.6); }
+
+/* --- États Spécifiques --- */
+
+.expense-card.paid {
+    border-left: 6px solid #28a745;
+    background: #eafaea;
+    opacity: 0.9;
+}
+
+.expense-card.overdue {
+    border: 3px solid #DC3545;
+    /* ✨ EFFET MAGIQUE AMÉLIORÉ : Lueur rouge animée sur la carte */
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
+    background: #ffeded;
+    animation: pulse-border 1.5s infinite alternate, neon-red-glow 1.5s infinite alternate;
+}
+
+/* Animation de pulsation pour les cartes en retard */
+@keyframes pulse-border {
+    from {
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(220, 53, 69, 0.6);
+    }
+}
+/* ✨ EFFET MAGIQUE NOUVEAU : Animation NEON pour le texte en alerte */
+@keyframes neon-red-glow {
+    from { text-shadow: 0 0 5px #ff8a80; }
+    to { text-shadow: 0 0 10px #ff0000; }
+}
+
+
+/* --- Toast Notifications (Amélioration du Toast) --- */
 #toast-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
+    bottom: 30px;
+    right: 30px;
+    z-index: 2000;
 }
 
 .toast {
     display: flex;
     align-items: center;
     background: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    margin-top: 10px;
-    opacity: 1;
-    transform: translateX(0);
-    transition: opacity 0.5s, transform 0.5s;
-    font-weight: 600;
-    border-left: 5px solid;
+    padding: 18px 25px;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    margin-top: 15px;
+    font-weight: 700;
+    border-left: 6px solid;
+    /* Animation d'entrée */
+    animation: slideIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
 .toast.hide {
@@ -437,24 +654,28 @@ body {
 /* ========================================================= */
 /* --- Styles pour la Gestion des Tâches (Task Management) --- */
 /* ========================================================= */
+
 .task-management {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    margin-top: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    /* EFFET MAGIQUE AMÉLIORÉ : Glassmorphism */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
+/* ... (Reste des styles de Task Management non modifiés) ... */
 .task-form-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     align-items: end;
 }
-
 .task-form-grid .task-btn {
     grid-column: 1 / -1;
-    padding: 12px;
+    padding: 16px;
 }
 
 .task-list-grid {
@@ -464,9 +685,8 @@ body {
     margin-top: 20px;
 }
 
-/* Barres de progression des tâches (utilise une couleur d'accent différente) */
 .progress-bar.task-progress {
-    background: linear-gradient(90deg, #17a2b8, #1a73e8); /* Bleu/Cyan pour les tâches */
+    background: linear-gradient(90deg, #17a2b8, #00BCD4); /* Bleu/Cyan pour les tâches */
 }
 
 /* Style de chaque carte de tâche */
@@ -474,11 +694,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background: #f8f8f8;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    transition: background 0.3s, opacity 0.3s;
+    padding: 18px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+.task-card:hover {
+    transform: translateY(-2px);
+    /* ✨ EFFET MAGIQUE NOUVEAU : Légère lueur */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1), 0 0 5px rgba(23, 162, 184, 0.2);
 }
 
 .task-info {
@@ -489,10 +715,10 @@ body {
 
 .task-info input[type="checkbox"] {
     margin-right: 15px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     cursor: pointer;
-    accent-color: #28a745;
+    accent-color: #4CAF50;
 }
 
 .task-info label {
@@ -502,18 +728,21 @@ body {
 }
 
 .task-name {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1.1em;
     color: #333;
     margin-right: 10px;
 }
 .task-location {
-    font-size: 0.9em;
+    font-size: 0.95em;
+    color: #1A73E8;
+    font-weight: 700;
     margin-right: 10px;
 }
 .task-responsible {
     font-size: 0.9em;
     color: #777;
+    font-weight: 500;
 }
 
 .task-meta {
@@ -524,53 +753,61 @@ body {
 
 .task-due-date {
     font-size: 0.9em;
-    color: #1a73e8;
+    color: #1A73E8;
 }
 .task-cost {
     font-weight: 700;
     font-size: 0.9em;
-    color: #007bff; /* Bleu pour le coût estimé */
-}
-
-/* Indicateur d'avancement */
-.task-progress-indicator {
-    font-size: 0.8em;
-    font-weight: 700;
-    color: #1a73e8;
-    background: #e6f0ff;
+    color: #00BCD4;
+    background: #e0f7fa;
     padding: 3px 8px;
     border-radius: 4px;
 }
 
-.delete-task-btn {
-    background: transparent;
-    color: #dc3545;
-    padding: 5px 8px;
-    font-size: 1.1em;
-    border: none;
-    cursor: pointer;
+.task-progress-indicator {
+    font-size: 0.85em;
+    font-weight: 800;
+    color: white;
+    background: #4CAF50;
+    padding: 5px 10px;
+    border-radius: 20px;
 }
-.delete-task-btn:hover {
-    background: #fae0e2;
+.task-card.task-priority-haute .task-progress-indicator {
+    background: #DC3545;
 }
 
-/* NOUVEAU: Style du bouton de modification d'avancement */
-.action-btn.update-progress-btn {
-    background: #17a2b8; /* Couleur Cyan/Bleu secondaire */
-    color: white;
-    padding: 5px 8px;
-    font-size: 1.0em;
+
+.delete-task-btn, .update-progress-btn {
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 6px;
+    transition: background 0.2s;
     border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.action-btn.update-progress-btn:hover {
+
+.update-progress-btn {
+    background: #17a2b8;
+    color: white;
+}
+.update-progress-btn:hover {
     background: #138496;
 }
 
-/* États des tâches */
+.delete-task-btn {
+    background: #f8d7da;
+    color: #dc3545;
+}
+.delete-task-btn:hover {
+    background: #f5c6cb;
+}
+
+
 .task-card.task-completed {
-    background: #e9f5e9;
-    opacity: 0.7;
-    border-left: 4px solid #28a745;
+    border-left: 6px solid #28a745;
+    background: #f6fff6;
+    opacity: 0.8;
 }
 .task-card.task-completed .task-name {
     text-decoration: line-through;
@@ -578,46 +815,52 @@ body {
 }
 
 .task-card.task-overdue:not(.task-completed) {
-    border: 2px solid #dc3545;
+    border: 2px solid #DC3545;
     background: #fffafa;
 }
 
-/* Style pour le statut "Bloquée" */
 .task-card.task-priority-bloquée {
-    border-left: 4px solid #6c757d; /* Gris pour bloqué */
-    opacity: 0.9;
+    border-left: 4px solid #6c757d;
 }
 
+
 /* ========================================================= */
-/* --- Réactivité (Mobile-First) --- */
+/* --- Réactivité (CORRECTION MOBILE) --- */
+/* (Toutes vos corrections de Media Query sont conservées) */
 /* ========================================================= */
 
 @media(max-width: 992px) {
-    /* Sur les pages séparées, l'ordre n'est plus pertinent, mais les colonnes le sont */
+    /* ... (code non modifié pour les tablettes) ... */
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
-
     .task-form-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .task-form-grid .form-group {
-        grid-column: span 1;
+    .category-content {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .category-header h3 {
+        font-size: 1.3rem;
+    }
+    .category-header span {
+        font-size: 1.4rem;
     }
 }
 
 @media(max-width: 600px) {
+    /* ... (code non modifié pour les mobiles) ... */
     .container {
         padding: 10px;
     }
 
-    /* En-tête mobile */
+    /* CORRECTION DE L'EN-TÊTE */
     .app-header {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         padding: 15px 10px;
+        border-radius: 0;
     }
     .app-header h1 {
         position: static;
@@ -627,6 +870,8 @@ body {
         order: 2;
         flex-grow: 1;
         text-align: center;
+        /* Désactiver les effets néon/lueur sur mobile pour la lisibilité */
+        text-shadow: none;
     }
     .app-header i:first-child {
         font-size: 1.2rem;
@@ -634,43 +879,71 @@ body {
     }
     .app-header a.nav-button {
         order: 3;
-        font-size: 0.8em;
-        padding: 5px 10px;
+        font-size: 0.75em;
+        padding: 6px 10px;
+        box-shadow: none;
     }
 
-    /* 1. Dashboard Totaux */
+    /* CORRECTION DU DASHBOARD ET FORMULAIRES */
     .dashboard-totals {
-        grid-template-columns: 1fr;
-    }
-    .stat-card strong {
-        font-size: 24px;
-    }
-
-    /* 2. Formulaires (Dépenses et Tâches) */
-    .modern-form {
         grid-template-columns: 1fr;
         gap: 15px;
     }
-    .task-form-grid {
-        grid-template-columns: 1fr;
+    .stat-card:hover {
+        /* Désactiver le scale sur mobile */
+        transform: none;
     }
-    .task-form-grid .task-btn,
-    .task-form-grid .form-group {
+    .modern-form, .task-form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .submit-btn, .task-btn {
         grid-column: 1 / -1;
     }
-    .form-section fieldset, .task-management fieldset {
-        padding: 0;
+
+    /* CORRECTION LISTE DES DÉPENSES */
+    .list-section > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #export-pdf-btn {
+        margin-top: 10px !important;
+        width: 100%;
+        text-align: center;
     }
 
-    /* 3. Liste des Dépenses */
-    .expense-grid {
-        grid-template-columns: 1fr;
+    .category-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
     }
+    .category-header h3 {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        order: 1;
+    }
+    .category-header span {
+        font-size: 1.2rem;
+        order: 2;
+        text-shadow: none; /* Désactiver la lueur sur mobile */
+    }
+    .category-header i.toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 25px;
+    }
+
+    .category-content {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    /* CORRECTION DES CARTES DE DÉPENSE */
     .expense-card {
         padding: 15px;
     }
     .card-amount {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
     .card-header {
         flex-direction: column;
@@ -679,27 +952,43 @@ body {
     .card-type {
         margin-bottom: 5px;
     }
-    .card-details p {
-        font-size: 0.85em;
-    }
+
     .card-footer {
         flex-wrap: wrap;
         justify-content: space-between;
+        gap: 8px;
     }
     .due-date {
         margin-left: 0;
+        font-size: 0.8em;
     }
     .expense-actions {
         flex-direction: column;
         gap: 8px;
     }
     .action-btn {
-        width: 100%;
-        text-align: center;
+        min-width: 100%;
         padding: 10px;
     }
 
-    /* 4. Cartes de Tâches */
+    .expense-card.overdue {
+        /* Désactiver les animations coûteuses sur mobile */
+        animation: none;
+    }
+
+    /* CORRECTION TOAST */
+    #toast-container {
+        bottom: 10px;
+        right: 10px;
+        width: 90%;
+    }
+    .toast {
+        padding: 12px 15px;
+        font-size: 0.9em;
+        width: 100%;
+    }
+
+    /* CORRECTION TÂCHES */
     .task-card {
         flex-direction: column;
         align-items: flex-start;
@@ -713,6 +1002,7 @@ body {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        flex-wrap: nowrap;
     }
     .task-name {
         font-size: 1em;
@@ -732,9 +1022,4 @@ body {
     .task-meta > * {
         margin-bottom: 5px;
     }
-    .update-progress-btn, .delete-task-btn {
-        flex-grow: 0;
-    }
-    .task-priority-badge { order: -1; }
-    .task-progress-indicator { order: 0; }
 }
