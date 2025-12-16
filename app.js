@@ -23,6 +23,8 @@ const tasksRef = db.collection("tasks");
 const isExpensePage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
 const isTaskPage = window.location.pathname.includes('tasks.html');
 
+// Variable globale pour stocker les données de dépenses (pour le PDF)
+let allExpensesData = [];
 
 // =========================================================
 // 🧩 DOM Cache & Utilitaires (Communs)
@@ -69,7 +71,7 @@ function showToast(message, type = 'info') {
 // =========================================================
 
 if (isExpensePage) {
-    const BUDGET_CIBLE = { "Outillage": 5000, "Prestations": 20000, "Grosses dépenses": 15000, "Total": 94000 };
+    const BUDGET_CIBLE = { "Outillage": 10000, "Prestations": 24000, "Grosses dépenses": 60000, "Total": 94000 };
 
     // Cache des Totaux et des Conteneurs
     const outillageTotal = document.getElementById("outillage");
@@ -80,6 +82,8 @@ if (isExpensePage) {
     const cardsContainer = document.getElementById("cards-container");
     const overallProgress = document.getElementById("overall-progress");
     const progressTracker = document.getElementById("progress-tracker");
+    const totalBudgetTracker = document.getElementById("total-budget-tracker"); // Nouveau pour le budget cible
+    const exportPdfBtn = document.getElementById("export-pdf-btn"); // Bouton PDF
 
     // Éléments Formulaire
     const expenseForm = document.getElementById("expense-form");
@@ -96,6 +100,10 @@ if (isExpensePage) {
         document.getElementById("prestations-budget").textContent = formatCurrency(BUDGET_CIBLE.Prestations);
         document.getElementById("grosses-budget").textContent = formatCurrency(BUDGET_CIBLE["Grosses dépenses"]);
         document.getElementById("total-budget").textContent = formatCurrency(BUDGET_CIBLE.Total);
+
+        if (totalBudgetTracker) {
+            totalBudgetTracker.textContent = `Budget Cible: ${formatCurrency(BUDGET_CIBLE.Total)}`;
+        }
     });
 
     // Soumission du formulaire
@@ -139,6 +147,7 @@ if (isExpensePage) {
         let totalPendingAmount = 0;
         const today = new Date().toISOString().split('T')[0];
         cardsContainer.innerHTML = '';
+        allExpensesData = []; // Réinitialiser le tableau des données pour le PDF
 
         snapshot.forEach(doc => {
             const e = doc.data();
@@ -156,6 +165,21 @@ if (isExpensePage) {
 
             const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
             const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-').replace('/', '');
+
+            // Enregistrement des données pour l'export PDF
+            allExpensesData.push({
+                date: formatDate(e.date),
+                type: e.type,
+                category: e.category,
+                description: e.description,
+                recipient: e.recipient,
+                amount: e.amount,
+                paidBy: e.paidBy,
+                status: e.status,
+                reimbursementStatus: e.reimbursementStatus,
+                dueDate: formatDate(e.dueDate)
+            });
+
 
             const cardHTML = `
                 <div class="expense-card ${isPaid ? 'paid' : ''} ${isOverdue ? 'overdue' : ''}" data-id="${docId}">
@@ -206,13 +230,7 @@ if (isExpensePage) {
 
         overallProgress.style.width = `${clampedProgress}%`;
         progressTracker.querySelector('p').textContent = progressText;
-        progressTracker.querySelector('span').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
-
-        if (progressPercentage > 100) {
-            overallProgress.classList.add('budget-alert');
-        } else {
-            overallProgress.classList.remove('budget-alert');
-        }
+        progressTracker.querySelector('span:first-of-type').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`; // Cibler le span des dépenses
     });
 
     // Fonctions CRUD des Dépenses (rendues globales pour les onclick)
@@ -262,6 +280,86 @@ if (isExpensePage) {
             showToast("Format de date invalide. Utilisez YYYY-MM-DD.", 'error');
         }
     }
+
+    // =========================================================
+    // 🖨️ FONCTION D'EXPORTATION PDF
+    // =========================================================
+
+    /**
+     * Génère un fichier PDF à partir des données de dépenses stockées.
+     */
+    function exportExpensesToPDF() {
+        if (!allExpensesData || allExpensesData.length === 0) {
+            showToast("Aucune dépense à exporter.", 'info');
+            return;
+        }
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape'); // Format paysage pour plus de colonnes
+
+            // 1. Préparation des données pour autoTable
+            const headers = [
+                ['Date', 'Type', 'Catégorie', 'Description', 'Montant (€)', 'Payé par', 'Statut', 'Remb.', 'Échéance']
+            ];
+
+            let totalSpent = 0;
+            const body = allExpensesData.map(e => {
+                totalSpent += e.amount;
+                return [
+                    e.date,
+                    e.type,
+                    e.category,
+                    e.description.length > 30 ? e.description.substring(0, 27) + '...' : e.description, // Tronquer si trop long
+                    formatCurrency(e.amount),
+                    e.paidBy,
+                    e.status,
+                    e.reimbursementStatus,
+                    e.dueDate
+                ];
+            });
+
+            // 2. Ajout du titre
+            doc.setFontSize(18);
+            doc.text("Rapport de Suivi des Dépenses Travaux", 14, 20);
+
+            // 3. Ajout des totaux
+            doc.setFontSize(10);
+            doc.text(`Total Dépensé: ${formatCurrency(totalSpent)}`, 14, 28);
+            doc.text(`Date de Génération: ${formatDate(new Date().toISOString().split('T')[0])}`, 14, 34);
+
+            // 4. Génération du tableau avec autoTable
+            doc.autoTable({
+                head: headers,
+                body: body,
+                startY: 40,
+                theme: 'striped',
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: [26, 115, 232] // Bleu
+                },
+                columnStyles: {
+                    4: { cellWidth: 20 }, // Montant
+                    8: { cellWidth: 20 }  // Échéance
+                }
+            });
+
+            // 5. Enregistrement du fichier
+            doc.save(`Rapport_Depenses_Travaux_${new Date().toISOString().split('T')[0]}.pdf`);
+            showToast("Fichier PDF généré avec succès !", 'success');
+
+        } catch (e) {
+            console.error("Erreur lors de la génération du PDF:", e);
+            showToast("Impossible de générer le PDF. Vérifiez la console.", 'error');
+        }
+    }
+
+    // Événement du bouton d'exportation PDF
+    exportPdfBtn.addEventListener('click', exportExpensesToPDF);
 }
 
 

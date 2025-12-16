@@ -18,14 +18,13 @@ body {
 .app-header {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Pour placer le bouton à droite */
-    padding: 20px; /* Augmenter le padding pour inclure le bouton */
+    justify-content: space-between;
+    padding: 20px;
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     margin-bottom: 20px;
 }
 .app-header h1 {
-    /* Centrer le titre */
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -67,7 +66,7 @@ body {
     padding: 20px;
     border-radius: 12px;
     background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombre douce */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.3s;
     border: 1px solid #eee;
 }
@@ -234,6 +233,15 @@ body {
     font-weight: 400;
     font-size: 0.9em;
     color: #777;
+}
+
+.budget-cible-tracker {
+    display: block;
+    font-weight: 600 !important;
+    font-size: 1em !important;
+    color: #1a73e8 !important;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .progress-bar-bg {
@@ -593,7 +601,6 @@ body {
 /* ========================================================= */
 
 @media(max-width: 992px) {
-    /* Sur les pages séparées, l'ordre n'est plus pertinent, mais les colonnes le sont */
     .modern-form {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -663,6 +670,15 @@ body {
     }
 
     /* 3. Liste des Dépenses */
+    .list-section > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #export-pdf-btn {
+        margin-top: 10px !important;
+        width: 100%;
+        text-align: center;
+    }
     .expense-grid {
         grid-template-columns: 1fr;
     }
