@@ -14,7 +14,11 @@ const firebaseConfig = {
     measurementId: "G-7NVN7W9HXX"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialisation de Firebase
+// Assurez-vous d'avoir inclus les scripts Firebase dans votre HTML
+if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 const expensesRef = db.collection("expenses");
 const tasksRef = db.collection("tasks");
@@ -41,6 +45,7 @@ const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', {
 const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
+        // Ajout de 'T00:00:00' pour gérer les différences de fuseau horaire
         return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
@@ -66,6 +71,7 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
+
 // =========================================================
 // 💸 LOGIQUE DÉPENSES (Si nous sommes sur index.html)
 // =========================================================
@@ -82,8 +88,8 @@ if (isExpensePage) {
     const cardsContainer = document.getElementById("cards-container");
     const overallProgress = document.getElementById("overall-progress");
     const progressTracker = document.getElementById("progress-tracker");
-    const totalBudgetTracker = document.getElementById("total-budget-tracker"); // Nouveau pour le budget cible
-    const exportPdfBtn = document.getElementById("export-pdf-btn"); // Bouton PDF
+    const totalBudgetTracker = document.getElementById("total-budget-tracker");
+    const exportPdfBtn = document.getElementById("export-pdf-btn");
 
     // Éléments Formulaire
     const expenseForm = document.getElementById("expense-form");
@@ -110,7 +116,6 @@ if (isExpensePage) {
     expenseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Récupérer les données du formulaire
         const formData = new FormData(expenseForm);
         const data = Object.fromEntries(formData.entries());
         data.amount = Number(data.amount);
@@ -125,7 +130,6 @@ if (isExpensePage) {
         try {
             await expensesRef.add(data);
 
-            // Réinitialisation
             expenseForm.reset();
             document.getElementById("status").value = 'Payé';
             document.getElementById("date").value = new Date().toISOString().split('T')[0];
@@ -146,8 +150,15 @@ if (isExpensePage) {
         let totalPaidAmount = 0;
         let totalPendingAmount = 0;
         const today = new Date().toISOString().split('T')[0];
+
+        let groupedExpenses = {
+            "Grosses dépenses": [], // Mis en premier pour l'ordre d'affichage
+            "Prestations": [],
+            "Outillage": []
+        };
+
         cardsContainer.innerHTML = '';
-        allExpensesData = []; // Réinitialiser le tableau des données pour le PDF
+        allExpensesData = [];
 
         snapshot.forEach(doc => {
             const e = doc.data();
@@ -163,23 +174,9 @@ if (isExpensePage) {
             totals[e.type] = (totals[e.type] || 0) + amount;
             isPaid ? (totalPaidAmount += amount) : (totalPendingAmount += amount);
 
+            // --- Construction des données pour la carte HTML ---
             const statusClass = expenseStatus.toLowerCase().replace(' ', '-');
             const reimbursementClass = reimbursementStatus.toLowerCase().replace(' ', '-').replace('/', '');
-
-            // Enregistrement des données pour l'export PDF
-            allExpensesData.push({
-                date: formatDate(e.date),
-                type: e.type,
-                category: e.category,
-                description: e.description,
-                recipient: e.recipient,
-                amount: e.amount,
-                paidBy: e.paidBy,
-                status: e.status,
-                reimbursementStatus: e.reimbursementStatus,
-                dueDate: formatDate(e.dueDate)
-            });
-
 
             const cardHTML = `
                 <div class="expense-card ${isPaid ? 'paid' : ''} ${isOverdue ? 'overdue' : ''}" data-id="${docId}">
@@ -211,7 +208,57 @@ if (isExpensePage) {
                     </div>
                 </div>
             `;
-            cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
+            // Ajout à la structure groupée
+            if (groupedExpenses[e.type]) {
+                groupedExpenses[e.type].push(cardHTML);
+            }
+
+            // Enregistrement des données pour l'export PDF
+            allExpensesData.push({
+                date: formatDate(e.date),
+                type: e.type,
+                category: e.category,
+                description: e.description,
+                recipient: e.recipient,
+                amount: e.amount,
+                paidBy: e.paidBy,
+                status: e.status,
+                reimbursementStatus: e.reimbursementStatus,
+                dueDate: formatDate(e.dueDate)
+            });
+        });
+
+        // --- Génération de la vue Arborescence ---
+        let treeHTML = '';
+        const categoriesOrder = ["Grosses dépenses", "Prestations", "Outillage"]; // Ordre d'affichage
+
+        categoriesOrder.forEach(category => {
+            const expenses = groupedExpenses[category];
+            const categoryTotal = totals[category];
+
+            if (expenses && expenses.length > 0) {
+                treeHTML += `
+                    <div class="category-node" data-category="${category.replace(' ', '-')}" id="node-${category.replace(' ', '-')}" ${category === "Grosses dépenses" ? 'class="category-node open"' : ''}>
+                        <div class="category-header">
+                            <h3><i class="fas fa-chevron-right toggle-icon"></i> ${category} (${expenses.length} dépense${expenses.length > 1 ? 's' : ''})</h3>
+                            <span>${formatCurrency(categoryTotal)}</span>
+                        </div>
+                        <div class="category-content">
+                            ${expenses.join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        cardsContainer.innerHTML = treeHTML;
+
+        // --- Logique d'ouverture/fermeture (Toggle) ---
+        document.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const node = header.closest('.category-node');
+                node.classList.toggle('open');
+            });
         });
 
         // Mise à jour des totaux et de la barre de progression
@@ -230,7 +277,7 @@ if (isExpensePage) {
 
         overallProgress.style.width = `${clampedProgress}%`;
         progressTracker.querySelector('p').textContent = progressText;
-        progressTracker.querySelector('span:first-of-type').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`; // Cibler le span des dépenses
+        progressTracker.querySelector('span:first-of-type').textContent = `Total Dépensé: ${formatCurrency(totalSpent)}`;
     });
 
     // Fonctions CRUD des Dépenses (rendues globales pour les onclick)
@@ -285,9 +332,6 @@ if (isExpensePage) {
     // 🖨️ FONCTION D'EXPORTATION PDF
     // =========================================================
 
-    /**
-     * Génère un fichier PDF à partir des données de dépenses stockées.
-     */
     function exportExpensesToPDF() {
         if (!allExpensesData || allExpensesData.length === 0) {
             showToast("Aucune dépense à exporter.", 'info');
@@ -295,8 +339,13 @@ if (isExpensePage) {
         }
 
         try {
+            // S'assurer que les bibliothèques sont chargées
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                 throw new Error("jsPDF library is not loaded.");
+            }
+
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('landscape'); // Format paysage pour plus de colonnes
+            const doc = new jsPDF('landscape');
 
             // 1. Préparation des données pour autoTable
             const headers = [
@@ -310,7 +359,7 @@ if (isExpensePage) {
                     e.date,
                     e.type,
                     e.category,
-                    e.description.length > 30 ? e.description.substring(0, 27) + '...' : e.description, // Tronquer si trop long
+                    e.description.length > 30 ? e.description.substring(0, 27) + '...' : e.description,
                     formatCurrency(e.amount),
                     e.paidBy,
                     e.status,
@@ -340,11 +389,11 @@ if (isExpensePage) {
                     overflow: 'linebreak'
                 },
                 headStyles: {
-                    fillColor: [26, 115, 232] // Bleu
+                    fillColor: [26, 115, 232]
                 },
                 columnStyles: {
-                    4: { cellWidth: 20 }, // Montant
-                    8: { cellWidth: 20 }  // Échéance
+                    4: { cellWidth: 20 },
+                    8: { cellWidth: 20 }
                 }
             });
 
@@ -354,12 +403,14 @@ if (isExpensePage) {
 
         } catch (e) {
             console.error("Erreur lors de la génération du PDF:", e);
-            showToast("Impossible de générer le PDF. Vérifiez la console.", 'error');
+            showToast("Impossible de générer le PDF. Vérifiez la console et les liens jsPDF.", 'error');
         }
     }
 
     // Événement du bouton d'exportation PDF
-    exportPdfBtn.addEventListener('click', exportExpensesToPDF);
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', exportExpensesToPDF);
+    }
 }
 
 
@@ -507,8 +558,10 @@ if (isTaskPage) {
     function updateTaskProgress(totalTasks, completedTasks) {
         const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        overallTaskProgressText.textContent = `${percentage}% (${completedTasks} / ${totalTasks} Tâches Terminées)`;
-        taskProgressBar.style.width = `${percentage}%`;
+        if (overallTaskProgressText && taskProgressBar) {
+            overallTaskProgressText.textContent = `${percentage}% (${completedTasks} / ${totalTasks} Tâches Terminées)`;
+            taskProgressBar.style.width = `${percentage}%`;
+        }
     }
 
     window.promptUpdateTaskProgress = async (id, currentProgress) => {

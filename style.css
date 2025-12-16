@@ -270,12 +270,77 @@ body {
     color: #333;
 }
 
-.expense-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
+/* NOUVEAUX STYLES POUR LA VUE EN ARBORESCENCE (Tree View) */
+.expense-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espace entre les groupes de catégories */
 }
 
+/* Style de l'entête de Catégorie (le nœud principal de l'arbre) */
+.category-node {
+    background: #e6f0ff; /* Bleu très clair */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #1a73e8; /* Bleu principal */
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.3s;
+}
+
+.category-header:hover {
+    background: #0d47a1;
+}
+
+.category-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.category-header span {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+/* Icône de bascule (flèche) */
+.category-header i.toggle-icon {
+    margin-right: 15px;
+    transition: transform 0.3s;
+}
+
+.category-node.open .category-header i.toggle-icon {
+    transform: rotate(90deg); /* Tourne la flèche quand c'est ouvert */
+}
+
+/* Conteneur des dépenses de la catégorie */
+.category-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    transition: max-height 0.5s ease-in-out, opacity 0.3s;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.category-node.open .category-content {
+    max-height: 5000px; /* Valeur élevée pour simuler 'auto' sans transition brusque */
+    opacity: 1;
+}
+
+/* Style des cartes de dépense */
 .expense-card {
     background: white;
     padding: 20px;
@@ -580,177 +645,4 @@ body {
     opacity: 0.7;
     border-left: 4px solid #28a745;
 }
-.task-card.task-completed .task-name {
-    text-decoration: line-through;
-    color: #666;
-}
-
-.task-card.task-overdue:not(.task-completed) {
-    border: 2px solid #dc3545;
-    background: #fffafa;
-}
-
-/* Style pour le statut "Bloquée" */
-.task-card.task-priority-bloquée {
-    border-left: 4px solid #6c757d; /* Gris pour bloqué */
-    opacity: 0.9;
-}
-
-/* ========================================================= */
-/* --- Réactivité (Mobile-First) --- */
-/* ========================================================= */
-
-@media(max-width: 992px) {
-    .modern-form {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .task-form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .task-form-grid .form-group {
-        grid-column: span 1;
-    }
-}
-
-@media(max-width: 600px) {
-    .container {
-        padding: 10px;
-    }
-
-    /* En-tête mobile */
-    .app-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 10px;
-    }
-    .app-header h1 {
-        position: static;
-        transform: none;
-        font-size: 1.2rem;
-        margin: 0 5px;
-        order: 2;
-        flex-grow: 1;
-        text-align: center;
-    }
-    .app-header i:first-child {
-        font-size: 1.2rem;
-        order: 1;
-    }
-    .app-header a.nav-button {
-        order: 3;
-        font-size: 0.8em;
-        padding: 5px 10px;
-    }
-
-    /* 1. Dashboard Totaux */
-    .dashboard-totals {
-        grid-template-columns: 1fr;
-    }
-    .stat-card strong {
-        font-size: 24px;
-    }
-
-    /* 2. Formulaires (Dépenses et Tâches) */
-    .modern-form {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    .task-form-grid {
-        grid-template-columns: 1fr;
-    }
-    .task-form-grid .task-btn,
-    .task-form-grid .form-group {
-        grid-column: 1 / -1;
-    }
-    .form-section fieldset, .task-management fieldset {
-        padding: 0;
-    }
-
-    /* 3. Liste des Dépenses */
-    .list-section > div {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    #export-pdf-btn {
-        margin-top: 10px !important;
-        width: 100%;
-        text-align: center;
-    }
-    .expense-grid {
-        grid-template-columns: 1fr;
-    }
-    .expense-card {
-        padding: 15px;
-    }
-    .card-amount {
-        font-size: 1.2rem;
-    }
-    .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .card-type {
-        margin-bottom: 5px;
-    }
-    .card-details p {
-        font-size: 0.85em;
-    }
-    .card-footer {
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-    .due-date {
-        margin-left: 0;
-    }
-    .expense-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-    .action-btn {
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-    }
-
-    /* 4. Cartes de Tâches */
-    .task-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 15px;
-    }
-    .task-info {
-        width: 100%;
-    }
-    .task-info label {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .task-name {
-        font-size: 1em;
-    }
-    .task-location, .task-responsible {
-        font-size: 0.85em;
-        margin-left: 0;
-    }
-    .task-meta {
-        width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        margin-top: 10px;
-        border-top: 1px dashed #eee;
-        padding-top: 10px;
-    }
-    .task-meta > * {
-        margin-bottom: 5px;
-    }
-    .update-progress-btn, .delete-task-btn {
-        flex-grow: 0;
-    }
-    .task-priority-badge { order: -1; }
-    .task-progress-indicator { order: 0; }
-}
+.task-card.task-completed .task
