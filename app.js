@@ -76,9 +76,14 @@ function showToast(message, type = 'info') {
 // 💸 LOGIQUE DÉPENSES (Si nous sommes sur index.html)
 // =========================================================
 
-if (isExpensePage) {
-    const BUDGET_CIBLE = { "Outillage": 10000, "Prestations": 24000, "Grosses dépenses": 60000, "Total": 94000 };
-
+if (isExpensePage && expensesRef ) {
+    const BUDGET_CIBLE = {
+        "Outillage": 10000,
+        "Prestations": 24000,
+        "Grosses dépenses": 60000,
+        "Petites dépenses": 3000,
+        "Total": 96000
+    };
     // Cache des Totaux et des Conteneurs
     const outillageTotal = document.getElementById("outillage");
     const prestationsTotal = document.getElementById("prestations");
@@ -146,16 +151,19 @@ if (isExpensePage) {
 
     // Écoute des Dépenses en temps réel
     expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
-        let totals = { "Outillage": 0, "Prestations": 0, "Grosses dépenses": 0 };
-        let totalPaidAmount = 0;
-        let totalPendingAmount = 0;
-        const today = new Date().toISOString().split('T')[0];
+              // Initialisation des totaux incluant le nouveau type
+              let totals = { "Outillage": 0, "Prestations": 0, "Grosses dépenses": 0, "Petites dépenses": 0 };
+              let totalPaidAmount = 0;
+              let totalPendingAmount = 0;
+              const today = new Date().toISOString().split('T')[0];
 
-        let groupedExpenses = {
-            "Grosses dépenses": [], // Mis en premier pour l'ordre d'affichage
-            "Prestations": [],
-            "Outillage": []
-        };
+              // 2. Initialisation du groupement incluant le nouveau type
+              let groupedExpenses = {
+                  "Grosses dépenses": [],
+                  "Prestations": [],
+                  "Outillage": [],
+                  "Petites dépenses": []
+              };
 
         cardsContainer.innerHTML = '';
         allExpensesData = [];
@@ -230,7 +238,7 @@ if (isExpensePage) {
 
         // --- Génération de la vue Arborescence ---
         let treeHTML = '';
-        const categoriesOrder = ["Grosses dépenses", "Prestations", "Outillage"]; // Ordre d'affichage
+        const categoriesOrder = ["Grosses dépenses", "Prestations", "Outillage", "Petites dépenses"]; // Ordre d'affichage
 
         categoriesOrder.forEach(category => {
             const expenses = groupedExpenses[category];

@@ -924,4 +924,13 @@ body {
     .task-meta > * {
         margin-bottom: 5px;
     }
+    .category-node {
+            width: 100% !important; /* Force la largeur totale */
+            box-sizing: border-box; /* Empêche le padding de déborder */
+        }
+
+    .category-header {
+            width: 100% !important;
+            box-sizing: border-box;
+    }
 }
