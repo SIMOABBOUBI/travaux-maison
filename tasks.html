@@ -2,55 +2,56 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Tâches Travaux</title>
+    <title>Suivi des Tâches - Chantier</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="app-header">
-    <i class="fas fa-hard-hat"></i>
-    <h1>GESTION DES TÂCHES</h1>
-    <a href="index.html" class="nav-button">
-        <i class="fas fa-euro-sign"></i> Budget & Dépenses
-    </a>
+    <div class="logo-area">
+        <i class="fas fa-hard-hat"></i>
+        <h1>SUIVI DES TÂCHES</h1>
+    </div>
+    <div class="header-actions">
+        <a href="index.html" class="nav-button"><i class="fas fa-euro-sign"></i> Budget & Dépenses</a>
+    </div>
 </header>
 
 <main class="container">
-
     <div id="toast-container"></div>
 
     <section class="project-tracker">
-        <div class="tracker-header">
-            <h2>Avancement Global des Tâches</h2>
-        </div>
-
-        <div class="progress-bar-container">
-            <p id="overall-task-progress">0% (0 / 0 Tâches Terminées)</p>
-            <span>Progression basée sur le nombre de tâches complétées.</span>
-
-            <div class="progress-bar-bg">
-                <div id="task-progress-bar" class="progress-bar task-progress" style="width: 0;"></div>
+        <div class="stat-card">
+            <h2>Avancement Global</h2>
+            <div class="progress-bar-bg" style="height: 20px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden;">
+                <div id="task-progress-bar" style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s ease;"></div>
             </div>
+            <p id="overall-task-progress" style="font-weight: bold; color: #555;">0% (0 / 0 Tâches Terminées)</p>
         </div>
     </section>
 
-    <section class="form-section task-management">
+    <section class="form-section" id="task-form-container">
         <fieldset>
-            <legend>Ajouter une Nouvelle Tâche</legend>
-            <form id="task-form" class="modern-form task-form-grid">
-
-                <div class="form-group"><label for="task-location">Localisation</label><input placeholder="Cuisine, Salon, SDB..." id="task-location" name="location" required></div>
-                <div class="form-group"><label for="task-name">Nom de la Tâche</label><input placeholder="Ex: Pose du carrelage" id="task-name" name="name" required></div>
-
+            <legend id="task-form-legend">NOUVELLE TÂCHE</legend>
+            <form id="task-form" class="modern-form">
                 <div class="form-group">
-                    <label for="task-priority">Priorité / Statut</label>
-                    <select id="task-priority" name="priority">
+                    <label>Localisation</label>
+                    <input type="text" id="task-location" placeholder="Cuisine, Extérieur..." required>
+                </div>
+                <div class="form-group">
+                    <label>Nom de la Tâche</label>
+                    <input type="text" id="task-name" placeholder="Ex: Peinture murs" required>
+                </div>
+                <div class="form-group">
+                    <label>Priorité</label>
+                    <select id="task-priority">
                         <option value="Basse">Basse</option>
                         <option value="Moyenne" selected>Moyenne</option>
                         <option value="Haute">Haute</option>
@@ -58,34 +59,39 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="task-responsible">Responsable</label>
-                    <select id="task-responsible" name="responsible">
-                        <option value="Kimberley" selected>Kimberley</option>
+                    <label>Responsable</label>
+                    <select id="task-responsible">
+                        <option value="Kimberley">Kimberley</option>
                         <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
                         <option value="Externe">Externe</option>
                     </select>
                 </div>
-
-                <div class="form-group"><label for="task-taskDueDate">Date d'Échéance</label><input type="date" id="task-taskDueDate" name="taskDueDate"></div>
-                <div class="form-group"><label for="task-estimatedCost">Coût Estimé (€)</label><input type="number" min="0" step="1" placeholder="Ex: 500" id="task-estimatedCost" name="estimatedCost"></div>
-
-                <div class="form-group"><label for="task-progress">Avancement (%)</label><input type="number" min="0" max="100" step="1" placeholder="0 à 100" id="task-progress" name="progress" value="0"></div>
-                <div class="form-group"><label for="task-materialsLink">Lien Matériaux/Doc</label><input type="url" placeholder="Lien vers un site/fichier" id="task-materialsLink" name="materialsLink"></div>
-
-                <button type="submit" id="add-task-btn" class="submit-btn task-btn">
-                    <i class="fas fa-check-double"></i> Ajouter la Tâche
+                <div class="form-group">
+                    <label>Échéance</label>
+                    <input type="date" id="task-date">
+                </div>
+                <div class="form-group">
+                    <label>Avancement (%)</label>
+                    <input type="number" id="task-progress-percent" min="0" max="100" value="0">
+                </div>
+                <button type="submit" id="submit-task-btn" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i> AJOUTER LA TÂCHE
                 </button>
             </form>
         </fieldset>
     </section>
 
+    <div class="search-bar-container">
+        <div class="search-box">
+            <input type="text" id="task-search" placeholder="Rechercher une pièce, une tâche ou un responsable...">
+        </div>
+    </div>
+
     <section class="list-section">
-        <h2>Liste des Tâches en Cours</h2>
-        <div id="tasks-container" class="task-list-grid">
+        <div id="tasks-container" class="task-grid">
         </div>
     </section>
-
 </main>
 
 <script src="app.js" defer></script>

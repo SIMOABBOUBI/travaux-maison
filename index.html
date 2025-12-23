@@ -5,97 +5,60 @@
     <title>Suivi Financier Travaux</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="app-header">
-    <i class="fas fa-euro-sign"></i>
-    <h1>BUDGET & DÉPENSES</h1>
-    <a href="tasks.html" class="nav-button">
-        <i class="fas fa-hard-hat"></i> Tâches Travaux
-    </a>
+    <div class="header-left"></div>
+    <div class="logo-area">
+        <i class="fas fa-hammer"></i>
+        <h1>BUDGET & DÉPENSES de BIBI</h1>
+    </div>
+    <div class="header-actions">
+        <button id="export-pdf" class="pdf-btn"><i class="fas fa-file-pdf"></i> PDF</button>
+        <a href="tasks.html" class="nav-button"><i class="fas fa-tasks"></i> Tâches</a>
+    </div>
 </header>
 
 <main class="container">
-
-    <section class="project-tracker">
-        <div class="tracker-header">
-            <h2>📊 Avancement Global du Budget</h2>
-            <p>Objectif de Fin : 01/03/2026</p>
-        </div>
-
-        <div id="progress-tracker" class="progress-bar-container">
-            <p>0% Atteint</p>
-            <span>Total Dépensé: 0 €</span>
-            <span id="total-budget-tracker" class="budget-cible-tracker">Budget Cible: 0 €</span>
-
-            <div class="progress-bar-bg">
-                <div id="overall-progress" class="progress-bar" style="width: 0;"></div>
-            </div>
-        </div>
-    </section>
-
     <section class="dashboard-totals">
-        <div class="stat-card category-card" data-type="Outillage">
-            <p>Outillage - Dépensé</p>
-            <strong id="outillage">0 €</strong>
-            <p class="budget-target">Budget Cible : <span id="outillage-budget">0 €</span></p>
-        </div>
-        <div class="stat-card category-card" data-type="Prestations">
-            <p>Prestations - Dépensé</p>
-            <strong id="prestations">0 €</strong>
-            <p class="budget-target">Budget Cible : <span id="prestations-budget">0 €</span></p>
-        </div>
-        <div class="stat-card category-card" data-type="Grosses dépenses">
-            <p>Grosses dépenses - Dépensé</p>
-            <strong id="grosses">0 €</strong>
-            <p class="budget-target">Budget Cible : <span id="grosses-budget">0 €</span></p>
-        </div>
-
-        <div class="stat-card total-summary total-paid">
-            <p>Total Déjà Payé</p>
-            <strong id="total-paid">0 €</strong>
-            <p class="budget-target">Budget Global : <span id="total-budget">0 €</span></p>
-        </div>
-        <div class="stat-card total-summary total-pending">
-            <p>Reste à Payer (Fournisseur)</p>
-            <strong id="total-pending">0 €</strong>
-        </div>
+        <div class="stat-card total-paid"><p>Payé</p><strong id="total-paid">0,00 €</strong></div>
+        <div class="stat-card total-pending"><p>En Attente</p><strong id="total-pending">0,00 €</strong></div>
     </section>
 
-    <div id="toast-container"></div>
-
-    <section class="form-section">
+    <section class="form-section" id="form-container">
         <fieldset>
-            <legend>Ajouter une Nouvelle Dépense</legend>
+            <legend id="form-legend">AJOUTER UNE NOUVELLE DÉPENSE</legend>
             <form id="expense-form" class="modern-form">
+                <div class="form-group"><label>Date</label><input type="date" id="date" required></div>
 
-                <div class="form-group"><label for="date">Date</label><input type="date" id="date" name="date" required></div>
                 <div class="form-group">
-                    <label for="type">Type de Dépense</label>
-                    <select id="type" name="type" required>
-                        <option value="Outillage">Outillage</option>
-                        <option value="Prestations">Prestations</option>
+                    <label>Type de Dépense</label>
+                    <select id="type" required>
                         <option value="Grosses dépenses">Grosses dépenses</option>
-                        <option value="Petites dépenses">Petites dépenses</option> </select>
+                        <option value="Prestations">Prestations</option>
+                        <option value="Outillage">Outillage</option>
+                        <option value="Petites dépenses">Petites dépenses</option>
+                    </select>
                 </div>
 
-                <div class="form-group"><label for="category">Catégorie</label><input placeholder="Plomberie, Électricité..." id="category" name="category" required></div>
-                <div class="form-group"><label for="description">Description</label><input placeholder="Détails de l'achat/prestation" id="description" name="description" required></div>
-                <div class="form-group"><label for="recipient">Bénéficiaire</label><input placeholder="Nom du fournisseur" id="recipient" name="recipient" required></div>
-                <div class="form-group"><label for="amount">Montant (€)</label><input type="number" min="0.01" step="0.01" placeholder="Montant €" id="amount" name="amount" required></div>
+                <div class="form-group"><label>Catégorie</label><input type="text" id="category" placeholder="Ex: Plomberie" required></div>
+                <div class="form-group"><label>Description</label><input type="text" id="description" placeholder="Détails"></div>
+                <div class="form-group"><label>Bénéficiaire</label><input type="text" id="beneficiary" placeholder="Artisan ou Magasin"></div>
+                <div class="form-group"><label>Montant (€)</label><input type="number" step="0.01" id="amount" required></div>
+
                 <div class="form-group">
-                    <label for="paidBy">Payé par</label>
-                    <select id="paidBy" name="paidBy" required>
-                        <option value="Kimberley" selected>Kimberley</option>
+                    <label>Payé par</label>
+                    <select id="paidBy">
+                        <option value="Kimberley">Kimberley</option>
                         <option value="Simo">Simo</option>
                         <option value="Tony">Tony</option>
                         <option value="Maman">Maman</option>
@@ -106,44 +69,40 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="reimbursementStatus">Remboursement</label>
-                    <select id="reimbursementStatus" name="reimbursementStatus">
-                        <option value="N/A" selected>N/A (Payé par moi-Kimberley)</option>
-                        <option value="A rembourser">A Rembourser</option>
+                    <label>Remboursement</label>
+                    <select id="refundStatus">
+                        <option value="N/A (Payé par moi-Kimberley)">N/A (Payé par moi-Kimberley)</option>
+                        <option value="A Rembourser">A Rembourser</option>
                         <option value="Remboursé">Remboursé</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="status">Statut (Fournisseur)</label>
-                    <select id="status" name="status" required>
+                    <label>Statut (Fournisseur)</label>
+                    <select id="status">
+                        <option value="En attente">En attente</option>
                         <option value="Acompte">Acompte</option>
                         <option value="Total">Total</option>
-                        <option value="Payé" selected>Payé</option>
-                        <option value="En attente">En attente</option>
+                        <option value="Payé">Payé</option>
                     </select>
                 </div>
 
-                <div class="form-group"><label for="dueDate">Échéance</label><input type="date" id="dueDate" name="dueDate"></div>
+                <div class="form-group"><label>Échéance</label><input type="date" id="dueDate"></div>
 
-                <button type="submit" id="add-expense-btn" class="submit-btn full-width">
-                    <i class="fas fa-plus"></i> Ajouter la Dépense
+                <button type="submit" id="add-expense-btn" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i> AJOUTER LA DÉPENSE
                 </button>
             </form>
         </fieldset>
     </section>
 
-    <section class="list-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>Dépenses Enregistrées</h2>
-            <button id="export-pdf-btn" class="submit-btn" style="width: auto; padding: 10px 15px; margin: 0; background: #dc3545;">
-                <i class="fas fa-file-pdf"></i> Exporter en PDF
-            </button>
+    <div class="search-bar-container">
+        <div class="search-box">
+            <input type="text" id="expense-search" placeholder="Rechercher (Catégorie, Artisan, Payeur...)">
         </div>
+    </div>
 
-        <div id="cards-container" class="expense-tree-container">
-        </div>
-    </section>
-
+    <div id="cards-container"></div>
 </main>
 
 <script src="app.js" defer></script>
