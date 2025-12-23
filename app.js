@@ -29,6 +29,7 @@ const isTaskPage = window.location.pathname.includes('tasks.html');
 
 // Variable globale pour stocker les données de dépenses (pour le PDF)
 let allExpensesData = [];
+let editingExpenseId = null; // ID de la dépense en cours de modification
 
 // =========================================================
 // 🧩 DOM Cache & Utilitaires (Communs)
@@ -118,6 +119,7 @@ if (isExpensePage && expensesRef ) {
     });
 
     // Soumission du formulaire
+if (expenseForm) {
     expenseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -125,29 +127,75 @@ if (isExpensePage && expensesRef ) {
         const data = Object.fromEntries(formData.entries());
         data.amount = Number(data.amount);
 
-        if (isNaN(data.amount) || data.amount <= 0) {
-             return showToast("Le montant doit être un nombre positif.", 'error');
+        if (addButton) {
+            addButton.disabled = true;
+            addButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
         }
-
-        addButton.disabled = true;
-        addButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ajout en cours...';
 
         try {
-            await expensesRef.add(data);
+            if (editingExpenseId) {
+                // MODIFICATION
+                await expensesRef.doc(editingExpenseId).update(data);
+                showToast("Dépense mise à jour !", 'success');
+                editingExpenseId = null; // On réinitialise l'état
+            } else {
+                // AJOUT CLASSIQUE
+                await expensesRef.add(data);
+                showToast("Dépense ajoutée !", 'success');
+            }
 
+            // Reset complet du formulaire et du bouton
             expenseForm.reset();
-            document.getElementById("status").value = 'Payé';
-            document.getElementById("date").value = new Date().toISOString().split('T')[0];
-            showToast("Dépense ajoutée avec succès !", 'success');
+            addButton.innerHTML = '<i class="fas fa-plus"></i> Ajouter la Dépense';
+            addButton.style.backgroundColor = ""; // Reprend le style CSS par défaut
+            addButton.style.color = "";
+
+            // Remettre la date du jour par défaut
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
 
         } catch (error) {
-            console.error("Erreur d'ajout : ", error);
-            showToast("Erreur lors de l'ajout de la dépense.", 'error');
+            console.error("Erreur : ", error);
+            showToast("Une erreur est survenue", 'error');
         } finally {
-            addButton.disabled = false;
-            addButton.innerHTML = '<i class="fas fa-plus"></i> Ajouter la Dépense';
+            if (addButton) addButton.disabled = false;
         }
     });
+}
+    window.prepareEditExpense = async (id) => {
+        try {
+            const doc = await expensesRef.doc(id).get();
+            if (!doc.exists) return;
+
+            const data = doc.data();
+            editingExpenseId = id; // On stocke l'ID
+
+            // On remplit les champs du formulaire
+            if(document.getElementById("type")) document.getElementById("type").value = data.type;
+            if(document.getElementById("category")) document.getElementById("category").value = data.category;
+            if(document.getElementById("amount")) document.getElementById("amount").value = data.amount;
+            if(document.getElementById("description")) document.getElementById("description").value = data.description;
+            if(document.getElementById("recipient")) document.getElementById("recipient").value = data.recipient || '';
+            if(document.getElementById("date")) document.getElementById("date").value = data.date;
+            if(document.getElementById("dueDate")) document.getElementById("dueDate").value = data.dueDate || '';
+            if(document.getElementById("status")) document.getElementById("status").value = data.status;
+            if(document.getElementById("reimbursementStatus")) document.getElementById("reimbursementStatus").value = data.reimbursementStatus;
+            if(document.getElementById("paidBy")) document.getElementById("paidBy").value = data.paidBy || 'Moi';
+
+            // On change le look du bouton de validation
+            const addButton = document.getElementById("add-expense-btn");
+            addButton.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+            addButton.style.backgroundColor = "#fbbc04"; // Couleur orange pour signaler la modification
+            addButton.style.color = "#000";
+
+            // Scroll fluide vers le formulaire
+            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            showToast("Mode modification activé", 'info');
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération :", error);
+            showToast("Erreur de chargement", 'error');
+        }
+    };
 
     // Écoute des Dépenses en temps réel
     expensesRef.orderBy("date", "desc").onSnapshot(snapshot => {
@@ -212,7 +260,9 @@ if (isExpensePage && expensesRef ) {
                             `<button class="action-btn reimburse-btn" onclick="markReimbursed('${docId}')"><i class="fas fa-hand-holding-usd"></i> Rembourser</button>`
                             : ''}
                         <button class="action-btn postpone-btn" onclick="postponeExpense('${docId}', '${e.dueDate || ''}')"><i class="fas fa-clock"></i> Reporter</button>
+                        <button class="action-btn edit-btn" onclick="prepareEditExpense('${docId}')" style="background-color: #f1f3f4; color: #1a73e8;"><i class="fas fa-edit"></i> Modifier </button>
                         <button class="action-btn delete-btn" onclick="deleteExpense('${docId}')"><i class="fas fa-trash"></i> Supprimer</button>
+                        ${!isPaid ? `<button class="action-btn pay-btn" onclick="updateStatusExpense('${docId}', 'Payé')"><i class="fas fa-check"></i> Payer</button>` : ''}
                     </div>
                 </div>
             `;
