@@ -71,22 +71,56 @@ if (budgetForm) {
 
     budgetForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        const date = document.getElementById('date').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const beneficiary = document.getElementById('beneficiary').value;
+
         const data = {
-            date: document.getElementById('date').value,
+            date: date,
             type: document.getElementById('type').value,
             category: document.getElementById('category').value,
             description: document.getElementById('description').value,
-            beneficiary: document.getElementById('beneficiary').value,
-            amount: parseFloat(document.getElementById('amount').value),
+            beneficiary: beneficiary,
+            amount: amount,
             paidBy: document.getElementById('paidBy').value,
             refundStatus: document.getElementById('refundStatus').value,
             status: document.getElementById('status').value,
             dueDate: document.getElementById('dueDate').value
         };
-        editingId ? await expensesRef.doc(editingId).update(data) : await expensesRef.add(data);
-        e.target.reset();
-        editingId = null;
-        document.getElementById("form-container").classList.remove("edit-mode-active");
+
+        try {
+            // --- LOGIQUE ANTI-DOUBLON ---
+            // On ne vérifie les doublons que si on n'est PAS en mode édition
+            if (!editingId) {
+                const duplicateCheck = await expensesRef
+                    .where("date", "==", date)
+                    .where("amount", "==", amount)
+                    .where("beneficiary", "==", beneficiary)
+                    .get();
+
+                if (!duplicateCheck.empty) {
+                    const confirmDouble = confirm("Attention : Une dépense identique (même date, montant et bénéficiaire) existe déjà. Voulez-vous quand même l'ajouter ?");
+                    if (!confirmDouble) return; // On arrête tout si l'utilisateur annule
+                }
+            }
+
+            // --- ENREGISTREMENT ---
+            if (editingId) {
+                await expensesRef.doc(editingId).update(data);
+            } else {
+                await expensesRef.add(data);
+            }
+
+            e.target.reset();
+            editingId = null;
+            document.getElementById("form-container").classList.remove("edit-mode-active");
+            alert("Opération réussie !");
+
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement :", error);
+            alert("Une erreur est survenue. Contacter ton Bibi :) ");
+        }
     });
 
     expensesRef.orderBy("date", "desc").onSnapshot(snap => {
